@@ -1,22 +1,12 @@
 import React, { useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { SafeAreaView, StyleSheet, View, Text, ScrollView } from "react-native";
 import { Formik } from "formik";
 import { Input, Button, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/core";
 
-/*
-    username: { type: String, unique: true, required: true },
-    firstname: { type: String, required: true },
-    lastname: { type: String, required: true },
-    email: { type: String, required: true },
-    password: { type: String, required: true },
-*/
+import SignupSchema from "../models/SignupSchema";
+import { string } from "prop-types";
+
 export const SignupForm = () => {
   const initialValues = {
     firstname: "",
@@ -32,13 +22,28 @@ export const SignupForm = () => {
 
   const [showPassword, setShowPassword] = useState(false);
 
+  const ErrorMessage = ({ error }) => (
+    <Text style={{ fontSize: 14, color: "#F00" }}>{error}</Text>
+  );
+  ErrorMessage.propTypes = { error: string.isRequired };
   return (
-    <Formik initialValues={initialValues} onSubmit={onSubmit}>
-      {({ handleChange, handleBlur, handleSubmit, values }) => (
-        <KeyboardAvoidingView
-          behavior={"position"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 10}
-        >
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      validationSchema={SignupSchema}
+    >
+      {({
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        values,
+        errors,
+        touched,
+      }) => (
+        <View>
+          {errors.firstname && touched.firstname ? (
+            <ErrorMessage error={errors.firstname} />
+          ) : null}
           <Input
             onChangeText={handleChange("firstname")}
             onBlur={handleBlur("firstname")}
@@ -48,7 +53,11 @@ export const SignupForm = () => {
             autoCompleteType="name"
             keyboardType="name-phone-pad"
             textContentType="givenName"
+            returnKeyType="next"
           />
+          {errors.lastname && touched.lastname ? (
+            <ErrorMessage error={errors.lastname} />
+          ) : null}
           <Input
             onChangeText={handleChange("lastname")}
             onBlur={handleBlur("lastname")}
@@ -58,17 +67,25 @@ export const SignupForm = () => {
             autoCompleteType="name"
             keyboardType="name-phone-pad"
             textContentType="familyName"
+            returnKeyType="next"
           />
+          {errors.username && touched.username ? (
+            <ErrorMessage error={errors.username} />
+          ) : null}
           <Input
             onChangeText={handleChange("username")}
             onBlur={handleBlur("username")}
-            placeholder="Enter your unique username:"
+            placeholder="Enter a unique username:"
             leftIcon={{ type: "feather", name: "user" }}
             value={values.username}
             autoCompleteType="username"
             keyboardType="name-phone-pad"
             textContentType="nickname"
+            returnKeyType="next"
           />
+          {errors.email && touched.email ? (
+            <ErrorMessage error={errors.email} />
+          ) : null}
           <Input
             onChangeText={handleChange("email")}
             onBlur={handleBlur("email")}
@@ -78,7 +95,11 @@ export const SignupForm = () => {
             autoCompleteType="email"
             keyboardType="email-address"
             textContentType="emailAddress"
+            returnKeyType="next"
           />
+          {errors.password && touched.password ? (
+            <ErrorMessage error={errors.password} />
+          ) : null}
           <Input
             onChangeText={handleChange("password")}
             onBlur={handleBlur("password")}
@@ -95,9 +116,10 @@ export const SignupForm = () => {
                 onPress={() => setShowPassword(!showPassword)}
               />
             }
+            returnKeyType="done"
           />
           <Button onPress={handleSubmit} title="Submit" />
-        </KeyboardAvoidingView>
+        </View>
       )}
     </Formik>
   );
@@ -108,15 +130,17 @@ export default function Signup() {
   const goToLoginScreen = () => navigation.navigate("Login");
 
   return (
-    <SafeAreaView style={styles.container}>
-      <SignupForm />
-      <View>
-        <Button
-          title="Already have an account?"
-          onPress={goToLoginScreen}
-          type="clear"
-        />
-      </View>
+    <SafeAreaView>
+      <ScrollView contentContainerStyle={styles.container} alwaysBounceVertical>
+        <SignupForm />
+        <View>
+          <Button
+            title="Already have an account?"
+            onPress={goToLoginScreen}
+            type="clear"
+          />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
