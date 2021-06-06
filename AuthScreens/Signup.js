@@ -130,8 +130,11 @@ export default function Signup() {
   const goToLoginScreen = () => navigation.navigate("Login");
 
   return (
-    <SafeAreaView>
-      <ScrollView contentContainerStyle={styles.container} alwaysBounceVertical>
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        alwaysBounceVertical
+      >
         <SignupForm />
         <View>
           <Button
@@ -147,6 +150,11 @@ export default function Signup() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+  },
+  scrollView: {
     padding: 20,
   },
 });
