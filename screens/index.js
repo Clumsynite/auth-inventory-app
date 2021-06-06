@@ -12,7 +12,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { Icon } from "react-native-elements";
+import { Icon, Divider } from "react-native-elements";
 import { string, node, any } from "prop-types";
 import Home from "./Home";
 import Inventory from "./Inventory";
@@ -34,6 +34,8 @@ function Screens() {
     </Drawer.Navigator>
   );
 }
+
+const SidemenuDivider = () => <Divider style={{ marginVertical: 2 }} />;
 
 const CustomDrawer = () => {
   const menu = [
@@ -80,7 +82,7 @@ const CustomDrawer = () => {
           </View>
         </View>
       </View>
-
+      <SidemenuDivider />
       <View style={{ flex: 7 }}>
         <FlatList
           style={{ paddingLeft: 10 }}
@@ -91,7 +93,7 @@ const CustomDrawer = () => {
           }}
         />
       </View>
-
+      <SidemenuDivider />
       <View style={{ flex: 1 }}>
         <TouchableOpacity
           style={{
