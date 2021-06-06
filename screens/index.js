@@ -203,7 +203,7 @@ function InventoryStackScreen({ navigation }) {
     <InventoryStack.Navigator
       screenOptions={{
         headerTitle: "Inventory",
-        headerTitleStyle: { alignSelf: "center", fontWeight: "bold" },
+        headerTitleStyle: { fontWeight: "bold" },
       }}
     >
       <InventoryStack.Screen
