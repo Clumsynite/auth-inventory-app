@@ -16,6 +16,7 @@
     "expo": "~41.0.1",
     "expo-font": "~9.1.0",
     "expo-status-bar": "~1.0.4",
+    "formik": "^2.2.9",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "prop-types": "^15.7.2",
