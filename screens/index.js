@@ -14,8 +14,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Icon } from "react-native-elements";
 import { string, node, any } from "prop-types";
-import _ from "lodash";
-import * as app from "../app.json";
 import Home from "./Home";
 import Inventory from "./Inventory";
 
@@ -47,13 +45,15 @@ const CustomDrawer = () => {
     },
   ];
 
+  const logout = () => console.log("Logout Pressed");
+
   return (
-    <View style={{ height: windowHeight, flex: 1, marginBottom: 20 }}>
+    <View style={{ height: windowHeight, flex: 1 }}>
       <View
         style={{
           justifyContent: "center",
           alignItems: "center",
-          flex: 1,
+          flex: 2,
         }}
       >
         <View
@@ -81,7 +81,7 @@ const CustomDrawer = () => {
         </View>
       </View>
 
-      <View style={{ flex: 8 }}>
+      <View style={{ flex: 7 }}>
         <FlatList
           style={{ paddingLeft: 10 }}
           keyExtractor={(_, index) => index.toString()}
@@ -94,12 +94,18 @@ const CustomDrawer = () => {
 
       <View style={{ flex: 1 }}>
         <TouchableOpacity
-          style={{ height: 50, flexDirection: "row", alignItems: "center" }}
-          // onPress={() => navigation.navigate("Logout")}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            paddingHorizontal: 10,
+          }}
+          onPress={logout}
         >
+          <Icon name="log-out" type="feather" size={24} />
           <Text
             style={{
-              paddingLeft: 5,
+              paddingHorizontal: 10,
               fontWeight: "bold",
               fontSize: 18,
             }}
@@ -107,16 +113,6 @@ const CustomDrawer = () => {
             Logout
           </Text>
         </TouchableOpacity>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ fontSize: 14 }}>{_.get(app, "expo.version")}</Text>
-        </View>
       </View>
     </View>
   );
