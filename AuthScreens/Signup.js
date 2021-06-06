@@ -3,9 +3,10 @@ import { SafeAreaView, StyleSheet, View, Text, ScrollView } from "react-native";
 import { Formik } from "formik";
 import { Input, Button, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/core";
+import { string } from "prop-types";
 
 import SignupSchema from "../models/SignupSchema";
-import { string } from "prop-types";
+import util from "../api/util";
 
 export const SignupForm = () => {
   const initialValues = {
@@ -15,17 +16,24 @@ export const SignupForm = () => {
     email: "",
     password: "",
   };
+  const usernameStatus = {
+    EMPTY: { status: "EMPTY", icon: "user", color: "#000" },
+    EXISTS: { status: "EXISTS", icon: "user-minus", color: "#ff1a1a" },
+    NOT_EXISTS: { status: "NOT_EXISTS", icon: "user-check", color: "#00b300" },
+  };
 
   const onSubmit = (values) => {
     console.log("Submit Form", values);
   };
 
   const [showPassword, setShowPassword] = useState(false);
+  const [usernameExists, setUsernameExists] = useState(usernameStatus.EMPTY);
 
   const ErrorMessage = ({ error }) => (
-    <Text style={{ fontSize: 14, color: "#F00" }}>{error}</Text>
+    <Text style={{ fontSize: 14, color: "#ff1a1a" }}>{error}</Text>
   );
   ErrorMessage.propTypes = { error: string.isRequired };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -39,12 +47,15 @@ export const SignupForm = () => {
         values,
         errors,
         touched,
+        setFieldValue,
+        setFieldTouched,
       }) => (
         <View>
           {errors.firstname && touched.firstname ? (
             <ErrorMessage error={errors.firstname} />
           ) : null}
           <Input
+            inputStyle={styles.input}
             onChangeText={handleChange("firstname")}
             onBlur={handleBlur("firstname")}
             placeholder="Enter your firstname:"
@@ -59,6 +70,7 @@ export const SignupForm = () => {
             <ErrorMessage error={errors.lastname} />
           ) : null}
           <Input
+            inputStyle={styles.input}
             onChangeText={handleChange("lastname")}
             onBlur={handleBlur("lastname")}
             placeholder="Enter your lastname:"
@@ -73,10 +85,32 @@ export const SignupForm = () => {
             <ErrorMessage error={errors.username} />
           ) : null}
           <Input
-            onChangeText={handleChange("username")}
+            inputStyle={styles.input}
+            onChangeText={async (value) => {
+              try {
+                setFieldValue("username", value);
+                setFieldTouched("username", true);
+                const { exists } = await util.usernameExists(value);
+                setUsernameExists(
+                  !value || value.trim() === ""
+                    ? usernameStatus.EMPTY
+                    : exists
+                    ? usernameStatus.EXISTS
+                    : usernameStatus.NOT_EXISTS
+                );
+              } catch (e) {
+                console.error(e);
+              }
+            }}
             onBlur={handleBlur("username")}
             placeholder="Enter a unique username:"
-            leftIcon={{ type: "feather", name: "user" }}
+            leftIcon={
+              <Icon
+                type="feather"
+                name={usernameExists.icon}
+                color={usernameExists.color}
+              />
+            }
             value={values.username}
             autoCompleteType="username"
             keyboardType="name-phone-pad"
@@ -87,6 +121,7 @@ export const SignupForm = () => {
             <ErrorMessage error={errors.email} />
           ) : null}
           <Input
+            inputStyle={styles.input}
             onChangeText={handleChange("email")}
             onBlur={handleBlur("email")}
             placeholder="Enter your email:"
@@ -101,6 +136,7 @@ export const SignupForm = () => {
             <ErrorMessage error={errors.password} />
           ) : null}
           <Input
+            inputStyle={styles.input}
             onChangeText={handleChange("password")}
             onBlur={handleBlur("password")}
             placeholder="Enter your password:"
@@ -156,5 +192,8 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     padding: 20,
+  },
+  input: {
+    paddingHorizontal: 10,
   },
 });
