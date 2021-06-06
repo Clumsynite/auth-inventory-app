@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 /* eslint-disable react/jsx-no-bind */
 import React from "react";
 import { View, Text, TouchableOpacity, FlatList, Image } from "react-native";
@@ -5,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Icon } from "react-native-elements";
-import { string, node } from "prop-types";
+import { string, node, any } from "prop-types";
 import _ from "lodash";
 import * as app from "../app.json";
 import Home from "./Home";
@@ -159,27 +160,31 @@ FlatListComponent.defaultProps = {
   icon: null,
 };
 
+const MenuIcon = ({ navigation }) => (
+  <Icon
+    name="menu"
+    type="feather"
+    size={25}
+    onPress={() => navigation.openDrawer()}
+    containerStyle={{ marginLeft: 15 }}
+  />
+);
+MenuIcon.propTypes = {
+  navigation: any.isRequired,
+};
 function HomeStackScreen({ navigation }) {
   return (
     <HomeStack.Navigator
       screenOptions={{
         headerTitle: "Home",
-        headerTitleStyle: { alignSelf: "center", fontWeight: "bold" },
-        headerTintColor: "#fff",
+        headerTitleStyle: { fontWeight: "bold" },
       }}
     >
       <HomeStack.Screen
         name="Home"
         component={Home}
         options={{
-          headerLeft: (
-            <Icon
-              name="ios-menu"
-              size={25}
-              backgroundColor="#737477"
-              onPress={() => navigation.openDrawer()}
-            />
-          ),
+          headerLeft: () => <MenuIcon navigation={navigation} />,
         }}
       />
     </HomeStack.Navigator>
