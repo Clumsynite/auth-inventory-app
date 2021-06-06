@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, View, Text, ScrollView } from "react-native";
+import { SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
 import { Formik } from "formik";
 import { Input, Button, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/core";
-import { string } from "prop-types";
 
+import ErrorMessage from "../components/ErrorMessage";
 import SignupSchema from "../models/SignupSchema";
 import util from "../api/util";
+import ImagePicker from "../components/ImagePicker";
 
 export const SignupForm = () => {
   const initialValues = {
@@ -28,11 +29,7 @@ export const SignupForm = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [usernameExists, setUsernameExists] = useState(usernameStatus.EMPTY);
-
-  const ErrorMessage = ({ error }) => (
-    <Text style={{ fontSize: 14, color: "#ff1a1a" }}>{error}</Text>
-  );
-  ErrorMessage.propTypes = { error: string.isRequired };
+  const [image, setImage] = useState(null);
 
   return (
     <Formik
@@ -51,6 +48,11 @@ export const SignupForm = () => {
         setFieldTouched,
       }) => (
         <View>
+          <ImagePicker
+            image={image}
+            setImage={setImage}
+            placeholder="Press on the above icon to select a profile picture"
+          />
           {errors.firstname && touched.firstname ? (
             <ErrorMessage error={errors.firstname} />
           ) : null}
@@ -90,7 +92,7 @@ export const SignupForm = () => {
               try {
                 setFieldValue("username", value);
                 setFieldTouched("username", true);
-                const { exists } = await util.usernameExists(value);
+                const { exists } = await util.usernameExists(value.trim());
                 setUsernameExists(
                   !value || value.trim() === ""
                     ? usernameStatus.EMPTY
