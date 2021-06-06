@@ -1,17 +1,20 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable no-undef */
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { MenuProvider } from "react-native-popup-menu";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import { AuthProvider } from "./context/auth";
+import { AuthProvider, AuthContext } from "./context/auth";
 import Screens from "./screens";
+import AuthScreens from "./AuthScreens";
 
 export default function App() {
   const routeNameRef = useRef();
   const navigationRef = useRef();
   const Stack = createStackNavigator();
+
+  const { user } = useContext(AuthContext);
 
   return (
     <AuthProvider>
@@ -37,7 +40,11 @@ export default function App() {
               headerShown: false,
             }}
           >
-            <Stack.Screen name="Screens" component={Screens} />
+            {!user ? (
+              <Stack.Screen name="Screens" component={AuthScreens} />
+            ) : (
+              <Stack.Screen name="Screens" component={Screens} />
+            )}
           </Stack.Navigator>
         </NavigationContainer>
       </MenuProvider>
