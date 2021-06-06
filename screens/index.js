@@ -1,7 +1,14 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react/jsx-no-bind */
 import React from "react";
-import { View, Text, TouchableOpacity, FlatList, Image } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  Image,
+  Dimensions,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -11,6 +18,8 @@ import _ from "lodash";
 import * as app from "../app.json";
 import Home from "./Home";
 import Inventory from "./Inventory";
+
+const windowHeight = Dimensions.get("window").height;
 
 const Drawer = createDrawerNavigator();
 const HomeStack = createStackNavigator();
@@ -39,12 +48,12 @@ const CustomDrawer = () => {
   ];
 
   return (
-    <View style={{ backgroundColor: "#737477" }}>
+    <View style={{ height: windowHeight, flex: 1, marginBottom: 20 }}>
       <View
         style={{
           justifyContent: "center",
           alignItems: "center",
-          height: 120,
+          flex: 1,
         }}
       >
         <View
@@ -63,53 +72,51 @@ const CustomDrawer = () => {
               style={{
                 fontSize: 16,
                 fontWeight: "bold",
-                color: "#fff",
                 flexShrink: 1,
               }}
             >
-              Looking Good {`{userName}`}!
+              Hello {`{userName}`}!
             </Text>
           </View>
         </View>
       </View>
 
-      <FlatList
-        style={{ paddingLeft: 10 }}
-        keyExtractor={(_, index) => index.toString()}
-        data={menu}
-        renderItem={({ item }) => {
-          return <FlatListComponent {...item} />;
-        }}
-      />
+      <View style={{ flex: 8 }}>
+        <FlatList
+          style={{ paddingLeft: 10 }}
+          keyExtractor={(_, index) => index.toString()}
+          data={menu}
+          renderItem={({ item }) => {
+            return <FlatListComponent {...item} />;
+          }}
+        />
+      </View>
 
-      <TouchableOpacity
-        style={{ height: 50, flexDirection: "row", alignItems: "center" }}
-        // onPress={() => navigation.navigate("Logout")}
-      >
-        <Text
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity
+          style={{ height: 50, flexDirection: "row", alignItems: "center" }}
+          // onPress={() => navigation.navigate("Logout")}
+        >
+          <Text
+            style={{
+              paddingLeft: 5,
+              fontWeight: "bold",
+              fontSize: 18,
+            }}
+          >
+            Logout
+          </Text>
+        </TouchableOpacity>
+        <View
           style={{
-            paddingLeft: 5,
-            fontWeight: "bold",
-            fontSize: 18,
-            color: "#fff",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          Logout
-        </Text>
-      </TouchableOpacity>
-      <View
-        style={{
-          marginBottom: 50,
-          marginTop: 10,
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Text style={{ fontSize: 14, color: "#fff" }}>
-          {_.get(app, "expo.version")}
-        </Text>
+          <Text style={{ fontSize: 14 }}>{_.get(app, "expo.version")}</Text>
+        </View>
       </View>
     </View>
   );
@@ -142,7 +149,6 @@ const FlatListComponent = ({ menu, icon }) => {
             style={{
               fontSize: 16,
               fontWeight: "bold",
-              color: "#fff",
             }}
           >
             {menu}
@@ -191,7 +197,7 @@ function HomeStackScreen({ navigation }) {
   );
 }
 HomeStackScreen.propTypes = {
-  navigation: node.isRequired,
+  navigation: any.isRequired,
 };
 
 function InventoryStackScreen({ navigation }) {
@@ -200,27 +206,19 @@ function InventoryStackScreen({ navigation }) {
       screenOptions={{
         headerTitle: "Inventory",
         headerTitleStyle: { alignSelf: "center", fontWeight: "bold" },
-        headerTintColor: "#fff",
       }}
     >
       <InventoryStack.Screen
         name="Inventory"
         component={Inventory}
         options={{
-          headerLeft: (
-            <Icon
-              name="ios-menu"
-              size={25}
-              backgroundColor="#737477"
-              onPress={() => navigation.openDrawer()}
-            />
-          ),
+          headerLeft: () => <MenuIcon navigation={navigation} />,
         }}
       />
     </InventoryStack.Navigator>
   );
 }
 InventoryStackScreen.propTypes = {
-  navigation: node.isRequired,
+  navigation: any.isRequired,
 };
 export default Screens;
