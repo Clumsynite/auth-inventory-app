@@ -32,3 +32,5 @@ export const logout = async (token) => {
     return error;
   }
 };
+
+export default { login, logout };

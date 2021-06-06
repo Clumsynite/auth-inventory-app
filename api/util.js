@@ -10,9 +10,11 @@ export const ping = async () => {
 
 export const usernameExists = async (username) => {
   try {
-    const response = await fetch(`${url}/utils/check-username/${username}`);
+    const response = await fetch(`${url}/util/check-username/${username}`);
     return await response.json();
   } catch (error) {
     console.error(error);
   }
 };
+
+export default { ping, usernameExists };

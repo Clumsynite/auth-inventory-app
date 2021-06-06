@@ -32,3 +32,5 @@ export const updateProfile = async (user, token) => {
     console.error(error);
   }
 };
+
+export default { signup, updateProfile };
