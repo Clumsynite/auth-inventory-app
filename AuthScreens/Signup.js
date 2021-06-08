@@ -5,9 +5,10 @@ import { Input, Button, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/core";
 
 import ErrorMessage from "../components/ErrorMessage";
+import ImagePicker from "../components/ImagePicker";
+
 import SignupSchema from "../models/SignupSchema";
 import util from "../api/util";
-import ImagePicker from "../components/ImagePicker";
 
 export const SignupForm = () => {
   const initialValues = {
@@ -23,8 +24,12 @@ export const SignupForm = () => {
     NOT_EXISTS: { status: "NOT_EXISTS", icon: "user-check", color: "#00b300" },
   };
 
-  const onSubmit = (values) => {
-    console.log("Submit Form", values);
+  const onSubmit = async (values) => {
+    try {
+      console.log("Submit Form", values);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const [showPassword, setShowPassword] = useState(false);
