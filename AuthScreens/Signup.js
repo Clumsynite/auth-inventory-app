@@ -12,6 +12,7 @@ import { useNavigation } from "@react-navigation/core";
 
 import ErrorMessage from "../components/ErrorMessage";
 import ImagePicker from "../components/ImagePicker";
+import TranslucentLoader from "../components/TranslucentLoader";
 
 import SignupSchema from "../models/SignupSchema";
 import util from "../api/util";
@@ -34,151 +35,160 @@ export const SignupForm = () => {
   const [usernameExists, setUsernameExists] = useState(usernameStatus.EMPTY);
   const [image, setImage] = useState(null);
   const [checking, setChecking] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const onSubmit = async (values) => {
     try {
+      setSubmitting(true);
       console.log("Submit Form", values);
+      setSubmitting(false);
     } catch (e) {
+      setSubmitting(false);
       console.error(e);
     }
   };
-
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={onSubmit}
-      validationSchema={SignupSchema}
-    >
-      {({
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        values,
-        errors,
-        touched,
-        setFieldValue,
-        setFieldTouched,
-      }) => (
-        <View>
-          <ImagePicker
-            image={image}
-            setImage={setImage}
-            placeholder="Press on the above icon to select a profile picture"
-          />
-          {errors.firstname && touched.firstname ? (
-            <ErrorMessage error={errors.firstname} />
-          ) : null}
-          <Input
-            inputStyle={styles.input}
-            onChangeText={handleChange("firstname")}
-            onBlur={handleBlur("firstname")}
-            placeholder="Enter your firstname:"
-            leftIcon={{ type: "feather", name: "user" }}
-            value={values.firstname}
-            autoCompleteType="name"
-            keyboardType="name-phone-pad"
-            textContentType="givenName"
-            returnKeyType="next"
-          />
-          {errors.lastname && touched.lastname ? (
-            <ErrorMessage error={errors.lastname} />
-          ) : null}
-          <Input
-            inputStyle={styles.input}
-            onChangeText={handleChange("lastname")}
-            onBlur={handleBlur("lastname")}
-            placeholder="Enter your lastname:"
-            leftIcon={{ type: "feather", name: "user" }}
-            value={values.lastname}
-            autoCompleteType="name"
-            keyboardType="name-phone-pad"
-            textContentType="familyName"
-            returnKeyType="next"
-          />
-          {errors.username && touched.username ? (
-            <ErrorMessage error={errors.username} />
-          ) : null}
-          <Input
-            inputStyle={styles.input}
-            onChangeText={async (value) => {
-              try {
-                setChecking(true);
-                setFieldValue("username", value);
-                setFieldTouched("username", true);
-                const { exists } = await util.usernameExists(value.trim());
-                setUsernameExists(
-                  !value || value.trim() === ""
-                    ? usernameStatus.EMPTY
-                    : exists
-                    ? usernameStatus.EXISTS
-                    : usernameStatus.NOT_EXISTS
-                );
-                setChecking(false);
-              } catch (e) {
-                setChecking(false);
-                console.error(e);
+    <>
+      {!submitting && <TranslucentLoader visible={!submitting} />}
+      <Formik
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        validationSchema={SignupSchema}
+      >
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+          setFieldValue,
+          setFieldTouched,
+        }) => (
+          <View>
+            <ImagePicker
+              image={image}
+              setImage={setImage}
+              placeholder="Press on the above icon to select a profile picture"
+            />
+            {errors.firstname && touched.firstname ? (
+              <ErrorMessage error={errors.firstname} />
+            ) : null}
+            <Input
+              inputStyle={styles.input}
+              onChangeText={handleChange("firstname")}
+              onBlur={handleBlur("firstname")}
+              placeholder="Enter your firstname:"
+              leftIcon={{ type: "feather", name: "user" }}
+              value={values.firstname}
+              autoCompleteType="name"
+              keyboardType="name-phone-pad"
+              textContentType="givenName"
+              returnKeyType="next"
+            />
+            {errors.lastname && touched.lastname ? (
+              <ErrorMessage error={errors.lastname} />
+            ) : null}
+            <Input
+              inputStyle={styles.input}
+              onChangeText={handleChange("lastname")}
+              onBlur={handleBlur("lastname")}
+              placeholder="Enter your lastname:"
+              leftIcon={{ type: "feather", name: "user" }}
+              value={values.lastname}
+              autoCompleteType="name"
+              keyboardType="name-phone-pad"
+              textContentType="familyName"
+              returnKeyType="next"
+            />
+            {errors.username && touched.username ? (
+              <ErrorMessage error={errors.username} />
+            ) : null}
+            <Input
+              inputStyle={styles.input}
+              onChangeText={async (value) => {
+                try {
+                  setChecking(true);
+                  setFieldValue("username", value);
+                  setFieldTouched("username", true);
+                  const { exists } = await util.usernameExists(value.trim());
+                  setUsernameExists(
+                    !value || value.trim() === ""
+                      ? usernameStatus.EMPTY
+                      : exists
+                      ? usernameStatus.EXISTS
+                      : usernameStatus.NOT_EXISTS
+                  );
+                  setChecking(false);
+                } catch (e) {
+                  setChecking(false);
+                  console.error(e);
+                }
+              }}
+              onBlur={handleBlur("username")}
+              placeholder="Enter a unique username:"
+              leftIcon={
+                checking ? (
+                  <ActivityIndicator
+                    size="small"
+                    color={usernameExists.color}
+                  />
+                ) : (
+                  <Icon
+                    type="feather"
+                    name={usernameExists.icon}
+                    color={usernameExists.color}
+                  />
+                )
               }
-            }}
-            onBlur={handleBlur("username")}
-            placeholder="Enter a unique username:"
-            leftIcon={
-              checking ? (
-                <ActivityIndicator size="small" color={usernameExists.color} />
-              ) : (
+              value={values.username}
+              autoCompleteType="username"
+              keyboardType="name-phone-pad"
+              textContentType="nickname"
+              returnKeyType="next"
+            />
+            {errors.email && touched.email ? (
+              <ErrorMessage error={errors.email} />
+            ) : null}
+            <Input
+              inputStyle={styles.input}
+              onChangeText={handleChange("email")}
+              onBlur={handleBlur("email")}
+              placeholder="Enter your email:"
+              leftIcon={{ type: "feather", name: "mail" }}
+              value={values.email}
+              autoCompleteType="email"
+              keyboardType="email-address"
+              textContentType="emailAddress"
+              returnKeyType="next"
+            />
+            {errors.password && touched.password ? (
+              <ErrorMessage error={errors.password} />
+            ) : null}
+            <Input
+              inputStyle={styles.input}
+              onChangeText={handleChange("password")}
+              onBlur={handleBlur("password")}
+              placeholder="Enter your password:"
+              leftIcon={{ type: "feather", name: "lock" }}
+              value={values.password}
+              autoCompleteType="password"
+              secureTextEntry={!showPassword}
+              textContentType="password"
+              rightIcon={
                 <Icon
                   type="feather"
-                  name={usernameExists.icon}
-                  color={usernameExists.color}
+                  name={showPassword ? "eye-off" : "eye"}
+                  onPress={() => setShowPassword(!showPassword)}
                 />
-              )
-            }
-            value={values.username}
-            autoCompleteType="username"
-            keyboardType="name-phone-pad"
-            textContentType="nickname"
-            returnKeyType="next"
-          />
-          {errors.email && touched.email ? (
-            <ErrorMessage error={errors.email} />
-          ) : null}
-          <Input
-            inputStyle={styles.input}
-            onChangeText={handleChange("email")}
-            onBlur={handleBlur("email")}
-            placeholder="Enter your email:"
-            leftIcon={{ type: "feather", name: "mail" }}
-            value={values.email}
-            autoCompleteType="email"
-            keyboardType="email-address"
-            textContentType="emailAddress"
-            returnKeyType="next"
-          />
-          {errors.password && touched.password ? (
-            <ErrorMessage error={errors.password} />
-          ) : null}
-          <Input
-            inputStyle={styles.input}
-            onChangeText={handleChange("password")}
-            onBlur={handleBlur("password")}
-            placeholder="Enter your password:"
-            leftIcon={{ type: "feather", name: "lock" }}
-            value={values.password}
-            autoCompleteType="password"
-            secureTextEntry={!showPassword}
-            textContentType="password"
-            rightIcon={
-              <Icon
-                type="feather"
-                name={showPassword ? "eye-off" : "eye"}
-                onPress={() => setShowPassword(!showPassword)}
-              />
-            }
-            returnKeyType="done"
-          />
-          <Button onPress={handleSubmit} title="Submit" />
-        </View>
-      )}
-    </Formik>
+              }
+              returnKeyType="done"
+            />
+            <Button onPress={handleSubmit} title="Submit" />
+          </View>
+        )}
+      </Formik>
+    </>
   );
 };
 
