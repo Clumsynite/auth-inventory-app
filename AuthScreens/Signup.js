@@ -16,6 +16,7 @@ import TranslucentLoader from "../components/TranslucentLoader";
 
 import SignupSchema from "../models/SignupSchema";
 import util from "../api/util";
+import { signup } from "../api/user";
 
 export const SignupForm = () => {
   const initialValues = {
@@ -39,7 +40,9 @@ export const SignupForm = () => {
 
   const onSubmit = async (values) => {
     try {
+      if (image) values.photo = image;
       setSubmitting(true);
+      const data = await signup(values);
       console.log("Submit Form", values);
       setSubmitting(false);
     } catch (e) {
@@ -49,7 +52,7 @@ export const SignupForm = () => {
   };
   return (
     <>
-      {!submitting && <TranslucentLoader visible={!submitting} />}
+      {submitting && <TranslucentLoader visible={submitting} />}
       <Formik
         initialValues={initialValues}
         onSubmit={onSubmit}
