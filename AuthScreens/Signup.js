@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { Formik } from "formik";
 import { Input, Button, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/core";
@@ -24,6 +30,11 @@ export const SignupForm = () => {
     NOT_EXISTS: { status: "NOT_EXISTS", icon: "user-check", color: "#00b300" },
   };
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [usernameExists, setUsernameExists] = useState(usernameStatus.EMPTY);
+  const [image, setImage] = useState(null);
+  const [checking, setChecking] = useState(false);
+
   const onSubmit = async (values) => {
     try {
       console.log("Submit Form", values);
@@ -31,10 +42,6 @@ export const SignupForm = () => {
       console.error(e);
     }
   };
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [usernameExists, setUsernameExists] = useState(usernameStatus.EMPTY);
-  const [image, setImage] = useState(null);
 
   return (
     <Formik
@@ -95,6 +102,7 @@ export const SignupForm = () => {
             inputStyle={styles.input}
             onChangeText={async (value) => {
               try {
+                setChecking(true);
                 setFieldValue("username", value);
                 setFieldTouched("username", true);
                 const { exists } = await util.usernameExists(value.trim());
@@ -105,18 +113,24 @@ export const SignupForm = () => {
                     ? usernameStatus.EXISTS
                     : usernameStatus.NOT_EXISTS
                 );
+                setChecking(false);
               } catch (e) {
+                setChecking(false);
                 console.error(e);
               }
             }}
             onBlur={handleBlur("username")}
             placeholder="Enter a unique username:"
             leftIcon={
-              <Icon
-                type="feather"
-                name={usernameExists.icon}
-                color={usernameExists.color}
-              />
+              checking ? (
+                <ActivityIndicator size="small" color={usernameExists.color} />
+              ) : (
+                <Icon
+                  type="feather"
+                  name={usernameExists.icon}
+                  color={usernameExists.color}
+                />
+              )
             }
             value={values.username}
             autoCompleteType="username"
