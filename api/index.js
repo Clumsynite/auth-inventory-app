@@ -1,5 +1,5 @@
 // Development
-export const url = "http://192.168.1.103:5000";
+export const url = "http://192.168.1.102:5000";
 // Production
 // export const url = "https://clumsy-messenger.herokuapp.com";
 
