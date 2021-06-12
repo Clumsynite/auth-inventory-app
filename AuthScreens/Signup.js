@@ -49,11 +49,11 @@ export const SignupForm = () => {
       if (image) values.photo = image;
       setSubmitting(true);
       const data = await signup(values);
-      console.log("data", data);
       setSubmitting(false);
       if (data.success) {
         resetForm();
         setImage(null);
+        setUsernameExists(usernameStatus.EMPTY);
         setSnackbar({
           msg: data.msg,
           className: "success",
