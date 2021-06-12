@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
-import { Image, View, Platform, Text } from "react-native";
+import { View, Platform, Text } from "react-native";
 import * as ExpoImagePicker from "expo-image-picker";
 import { func, string } from "prop-types";
 import { Icon } from "react-native-elements";
 import { TouchableOpacity } from "react-native";
+import { Avatar } from ".";
 
 export default function ImagePicker({ image, setImage, placeholder }) {
   useEffect(() => {
@@ -45,10 +46,7 @@ export default function ImagePicker({ image, setImage, placeholder }) {
     >
       <TouchableOpacity onPress={pickImage}>
         {image ? (
-          <Image
-            source={{ uri: image }}
-            style={{ width: 120, height: 120, borderRadius: 100 }}
-          />
+          <Avatar source={`data:image/jpg;base64,${image}`} size={120} />
         ) : (
           <Icon name="user" type="feather" raised size={50} />
         )}
