@@ -24,10 +24,11 @@ export default function ImagePicker({ image, setImage, placeholder }) {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
+      base64: true,
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImage(result.base64);
     } else {
       setImage(null);
     }
