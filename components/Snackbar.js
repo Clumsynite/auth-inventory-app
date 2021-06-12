@@ -40,20 +40,20 @@ Snackbar.propTypes = {
 };
 Snackbar.defaultProps = {
   accent: "white",
-  className: "snackbar_default",
+  className: "default",
   number: 3000,
 };
 
 export default Snackbar;
 
 const styles = StyleSheet.create({
-  snackbar_default: {
+  default: {
     backgroundColor: "#000",
   },
-  snackbar_success: {
+  success: {
     backgroundColor: "#93f300",
   },
-  snackbar_error: {
+  error: {
     backgroundColor: "#ff1414",
   },
   snackbar: {
@@ -67,8 +67,8 @@ const styles = StyleSheet.create({
 /*
   // object for snackbar state 
   {
-    msg: "Signup Successful",
-    className: "snackbar_success",
+    msg: "Successful",
+    className: "success",
     accent: "red",
   }
 */
