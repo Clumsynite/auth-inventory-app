@@ -137,18 +137,20 @@ export const SignupForm = () => {
               inputStyle={styles.input}
               onChangeText={async (value) => {
                 try {
-                  setChecking(true);
                   setFieldValue("username", value);
                   setFieldTouched("username", true);
-                  const { exists } = await util.usernameExists(value.trim());
-                  setUsernameExists(
-                    !value || value.trim() === ""
-                      ? usernameStatus.EMPTY
-                      : exists
-                      ? usernameStatus.EXISTS
-                      : usernameStatus.NOT_EXISTS
-                  );
-                  setChecking(false);
+                  setTimeout(async () => {
+                    setChecking(true);
+                    const { exists } = await util.usernameExists(value.trim());
+                    setUsernameExists(
+                      !value || value.trim() === ""
+                        ? usernameStatus.EMPTY
+                        : exists
+                        ? usernameStatus.EXISTS
+                        : usernameStatus.NOT_EXISTS
+                    );
+                    setChecking(false);
+                  }, 500);
                 } catch (e) {
                   setChecking(false);
                   console.error(e);
