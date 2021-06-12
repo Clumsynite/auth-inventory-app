@@ -10,9 +10,12 @@ import { Formik } from "formik";
 import { Input, Button, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/core";
 
-import ErrorMessage from "../components/ErrorMessage";
-import ImagePicker from "../components/ImagePicker";
-import TranslucentLoader from "../components/TranslucentLoader";
+import {
+  ErrorMessage,
+  ImagePicker,
+  Snackbar,
+  TranslucentLoader,
+} from "../components";
 
 import SignupSchema from "../models/SignupSchema";
 import util from "../api/util";
@@ -37,14 +40,38 @@ export const SignupForm = () => {
   const [image, setImage] = useState(null);
   const [checking, setChecking] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [snackbar, setSnackbar] = useState();
 
-  const onSubmit = async (values) => {
+  const dismissSnackbar = () => setSnackbar(false);
+
+  const onSubmit = async (values, { resetForm }) => {
     try {
       if (image) values.photo = image;
       setSubmitting(true);
       const data = await signup(values);
-      console.log("Submit Form", values);
+      console.log("data", data);
       setSubmitting(false);
+      if (data.success) {
+        resetForm();
+        setImage(null);
+        setSnackbar({
+          msg: data.msg,
+          className: "success",
+          accent: "red",
+        });
+      } else if (data.message && data.name) {
+        setSnackbar({
+          msg: data.message,
+          className: "error",
+          accent: "white",
+        });
+      } else if (!data.success) {
+        setSnackbar({
+          msg: data.error,
+          className: "error",
+          accent: "white",
+        });
+      }
     } catch (e) {
       setSubmitting(false);
       console.error(e);
@@ -52,7 +79,6 @@ export const SignupForm = () => {
   };
   return (
     <>
-      {submitting && <TranslucentLoader visible={submitting} />}
       <Formik
         initialValues={initialValues}
         onSubmit={onSubmit}
@@ -191,6 +217,16 @@ export const SignupForm = () => {
           </View>
         )}
       </Formik>
+      {submitting && <TranslucentLoader visible={submitting} />}
+      {snackbar && (
+        <Snackbar
+          visible={!!snackbar}
+          message={snackbar.msg}
+          className={snackbar.className}
+          accent={snackbar.accent}
+          dismiss={dismissSnackbar}
+        />
+      )}
     </>
   );
 };
