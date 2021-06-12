@@ -29,7 +29,7 @@ export default function ImagePicker({ image, setImage, placeholder }) {
     });
 
     if (!result.cancelled) {
-      setImage(result.base64);
+      setImage(`data:image/jpg;base64,${result.base64}`);
     } else {
       setImage(null);
     }
@@ -46,7 +46,7 @@ export default function ImagePicker({ image, setImage, placeholder }) {
     >
       <TouchableOpacity onPress={pickImage}>
         {image ? (
-          <Avatar source={`data:image/jpg;base64,${image}`} size={120} />
+          <Avatar source={image} size={120} />
         ) : (
           <Icon name="user" type="feather" raised size={50} />
         )}
