@@ -63,3 +63,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+/*
+  // object for snackbar state 
+  {
+    msg: "Signup Successful",
+    className: "snackbar_success",
+    accent: "red",
+  }
+*/
