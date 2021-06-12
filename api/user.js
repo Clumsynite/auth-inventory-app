@@ -2,7 +2,7 @@ import { url } from "./index";
 
 export const signup = async (user) => {
   try {
-    const response = await fetch(`${url}/users`, {
+    const response = await fetch(`${url}/user`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -18,7 +18,7 @@ export const signup = async (user) => {
 
 export const updateProfile = async (user, token) => {
   try {
-    const response = await fetch(`${url}/users`, {
+    const response = await fetch(`${url}/user`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
