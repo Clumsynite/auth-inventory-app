@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -41,6 +41,13 @@ export const SignupForm = () => {
   const [checking, setChecking] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [snackbar, setSnackbar] = useState();
+
+  // input refs
+  const firstnameInput = useRef(null);
+  const lastnameInput = useRef(null);
+  const usernameInput = useRef(null);
+  const emailInput = useRef(null);
+  const passwordInput = useRef(null);
 
   const dismissSnackbar = () => setSnackbar(false);
 
@@ -104,6 +111,7 @@ export const SignupForm = () => {
               <ErrorMessage error={errors.firstname} />
             ) : null}
             <Input
+              ref={firstnameInput}
               inputStyle={styles.input}
               onChangeText={handleChange("firstname")}
               onBlur={handleBlur("firstname")}
@@ -114,11 +122,13 @@ export const SignupForm = () => {
               keyboardType="name-phone-pad"
               textContentType="givenName"
               returnKeyType="next"
+              onSubmitEditing={() => lastnameInput.current.focus()}
             />
             {errors.lastname && touched.lastname ? (
               <ErrorMessage error={errors.lastname} />
             ) : null}
             <Input
+              ref={lastnameInput}
               inputStyle={styles.input}
               onChangeText={handleChange("lastname")}
               onBlur={handleBlur("lastname")}
@@ -129,11 +139,13 @@ export const SignupForm = () => {
               keyboardType="name-phone-pad"
               textContentType="familyName"
               returnKeyType="next"
+              onSubmitEditing={() => usernameInput.current.focus()}
             />
             {errors.username && touched.username ? (
               <ErrorMessage error={errors.username} />
             ) : null}
             <Input
+              ref={usernameInput}
               inputStyle={styles.input}
               onChangeText={async (value) => {
                 try {
@@ -177,11 +189,13 @@ export const SignupForm = () => {
               keyboardType="name-phone-pad"
               textContentType="nickname"
               returnKeyType="next"
+              onSubmitEditing={() => emailInput.current.focus()}
             />
             {errors.email && touched.email ? (
               <ErrorMessage error={errors.email} />
             ) : null}
             <Input
+              ref={emailInput}
               inputStyle={styles.input}
               onChangeText={handleChange("email")}
               onBlur={handleBlur("email")}
@@ -192,11 +206,13 @@ export const SignupForm = () => {
               keyboardType="email-address"
               textContentType="emailAddress"
               returnKeyType="next"
+              onSubmitEditing={() => passwordInput.current.focus()}
             />
             {errors.password && touched.password ? (
               <ErrorMessage error={errors.password} />
             ) : null}
             <Input
+              ref={passwordInput}
               inputStyle={styles.input}
               onChangeText={handleChange("password")}
               onBlur={handleBlur("password")}
@@ -214,6 +230,7 @@ export const SignupForm = () => {
                 />
               }
               returnKeyType="done"
+              onSubmitEditing={handleSubmit}
             />
             <Button onPress={handleSubmit} title="Submit" />
           </View>
