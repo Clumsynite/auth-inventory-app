@@ -17,4 +17,12 @@ export const usernameExists = async (username) => {
   }
 };
 
-export default { ping, usernameExists };
+export const getAvatar = async (username) => {
+  try {
+    const response = await fetch(`${url}/util/get-avatar/${username}`);
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+  }
+};
+export default { ping, usernameExists, getAvatar };
