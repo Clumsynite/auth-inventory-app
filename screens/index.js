@@ -14,12 +14,14 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Icon, Divider } from "react-native-elements";
 import { string, node, any } from "prop-types";
+
 import Home from "./Home";
 import Inventory from "./Inventory";
-
-const windowHeight = Dimensions.get("window").height;
+import UserAvatar from "../components/UserAvatar";
 
 import { AuthContext } from "../context/auth";
+
+const windowHeight = Dimensions.get("window").height;
 
 const Drawer = createDrawerNavigator();
 const HomeStack = createStackNavigator();
@@ -68,22 +70,23 @@ const CustomDrawer = () => {
           style={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
+            justifyContent: "flex-start",
             alignItems: "center",
             width: "100%",
             padding: 15,
             paddingBottom: 0,
           }}
         >
-          <View style={{ flexShrink: 1 }}>
+          <UserAvatar username={username} />
+          <View style={{ flexShrink: 1, marginLeft: 20 }}>
             <Text
               style={{
-                fontSize: 16,
+                fontSize: 20,
                 fontWeight: "bold",
                 flexShrink: 1,
               }}
             >
-              Hello {`${username}`}!
+              Hello! {`${username}`}
             </Text>
           </View>
         </View>
