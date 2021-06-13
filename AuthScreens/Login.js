@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/core";
-import React, { useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
 import { Formik } from "formik";
 import { Input, Button, Icon } from "react-native-elements";
@@ -8,6 +8,7 @@ import { ErrorMessage, Snackbar, TranslucentLoader } from "../components";
 
 import LoginSchema from "../models/LoginSchema";
 import { login } from "../api/auth";
+import { AuthContext } from "../context/auth";
 
 export const LoginForm = () => {
   const initialValues = {
@@ -18,16 +19,21 @@ export const LoginForm = () => {
   const [submitting, setSubmitting] = useState(false);
   const [snackbar, setSnackbar] = useState();
 
+  const lastnameInput = useRef(null);
+
+  const { login: ctxLogin } = useContext(AuthContext);
+
   const dismissSnackbar = () => setSnackbar(false);
 
   const onSubmit = async (values, { resetForm }) => {
     try {
       setSubmitting(true);
       const data = await login(values);
-      console.log("data", data);
       setSubmitting(false);
       if (data.success) {
         resetForm();
+        const { user, token } = data;
+        ctxLogin({ user: { ...user, photo: "" }, token });
         setSnackbar({
           msg: data.msg,
           className: "success",
@@ -81,11 +87,13 @@ export const LoginForm = () => {
               keyboardType="name-phone-pad"
               textContentType="nickname"
               returnKeyType="next"
+              onSubmitEditing={() => lastnameInput.current.focus()}
             />
             {errors.password && touched.password ? (
               <ErrorMessage error={errors.password} />
             ) : null}
             <Input
+              ref={lastnameInput}
               onChangeText={handleChange("password")}
               onBlur={handleBlur("password")}
               placeholder="Enter your password:"
@@ -102,6 +110,7 @@ export const LoginForm = () => {
                 />
               }
               returnKeyType="done"
+              onSubmitEditing={handleSubmit}
             />
             <Button onPress={handleSubmit} title="Submit" />
           </View>
