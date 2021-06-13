@@ -22,7 +22,7 @@ export const AddItemForm = ({ token }) => {
     quantity: 0,
   };
   const [submitting, setSubmitting] = useState(false);
-  const [snackbar, setSnackbar] = useState();
+  const [snackbar, setSnackbar] = useState(false);
 
   const quantityInput = useRef(null);
 
@@ -135,8 +135,6 @@ export default function Inventory() {
   const [loading, setLoading] = useState(false);
   const [inventoryModal, setInventoryModal] = useState([]);
 
-  const closeInventoryModal = () => setInventoryModal(false);
-
   const addItemsModal = () => {
     setInventoryModal(true);
   };
@@ -145,15 +143,11 @@ export default function Inventory() {
     init();
   }, []);
 
-  useEffect(() => {
-    init();
-  }, [inventoryModal]);
-
   const init = async () => {
     try {
+      setInventoryModal(false);
       setLoading(true);
       const data = await getItems(token);
-      console.log("data", data);
       setLoading(false);
       if (data.success) setItems(data.items);
     } catch (error) {
@@ -181,8 +175,8 @@ export default function Inventory() {
       )}
       <Overlay
         isVisible={inventoryModal}
-        onBackdropPress={closeInventoryModal}
-        overlayStyle={{ width: "100%" }}
+        onBackdropPress={init}
+        overlayStyle={{ width: "90%" }}
       >
         <AddItemForm token={token} />
       </Overlay>
@@ -190,12 +184,17 @@ export default function Inventory() {
         icon="plus"
         large
         placement="right"
+        color="#fff"
         style={styles.fab}
         onPress={addItemsModal}
       />
     </SafeAreaView>
   );
 }
+
+// const ItemCard = ({item}) => {
+
+// }
 
 const styles = StyleSheet.create({
   container: {
