@@ -9,3 +9,15 @@ const InventorySchema = object().shape({
 });
 
 export default InventorySchema;
+
+/*
+// Inventory model in api
+  {
+    added: { type: Date, default: Date.now },
+    name: { type: String, required: true },
+    quantity: { type: Number, required: true },
+    user: { type: String, required: true },
+    photo: { type: String, required: false },
+    updated: { type: Date, default: Date.now },
+  }
+*/

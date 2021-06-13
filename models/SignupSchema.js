@@ -21,3 +21,16 @@ const SignupSchema = object().shape({
 });
 
 export default SignupSchema;
+
+/*
+// User model in api
+  {
+    username: { type: String, unique: true, required: true },
+    firstname: { type: String, required: true },
+    lastname: { type: String, required: true },
+    email: { type: String, required: true },
+    password: { type: String, required: true },
+    joined: { type: Date, default: Date.now },
+    photo: { type: String, required: false },
+  }
+*/
