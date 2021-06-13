@@ -1,25 +1,27 @@
 import { Formik } from "formik";
-import { string } from "prop-types";
+import { arrayOf, func, objectOf, shape, string } from "prop-types";
 import React, { useContext, useEffect, useState } from "react";
 import { useRef } from "react";
 import { SafeAreaView, Text, StyleSheet, View } from "react-native";
-import { Button, Input, Overlay } from "react-native-elements";
+import { Button, Icon, Input, Overlay } from "react-native-elements";
 import { FAB } from "react-native-paper";
 
 import {
   ErrorMessage,
+  ObjectText,
   Snackbar,
   Spinner,
   TranslucentLoader,
 } from "../components";
-import { getItems, addItem } from "../api/inventory";
-import InventorySchema from "../models/InventorySchema";
+import { getItems, addItem, updateItem } from "../api/inventory";
+import InventorySchema, { ItemShape } from "../models/InventorySchema";
 import { AuthContext } from "../context/auth";
+import moment from "moment";
 
-export const AddItemForm = ({ token }) => {
-  const initialValues = {
-    name: "",
-    quantity: 0,
+export const AddItemForm = ({ token, selectedItem, dismissModal }) => {
+  let initialValues = {
+    name: selectedItem?.name || "",
+    quantity: String(selectedItem?.quantity) || 0,
   };
   const [submitting, setSubmitting] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
@@ -30,9 +32,15 @@ export const AddItemForm = ({ token }) => {
 
   const onSubmit = async (values, { resetForm }) => {
     try {
+      values.quantity = Number(values.quantity);
       setSubmitting(true);
-      const data = await addItem(values, token);
-      console.log("DATA submit", data);
+      const data = selectedItem
+        ? await updateItem(
+            { ...selectedItem, ...values, updated: moment().toISOString() },
+            token
+          )
+        : await addItem(values, token);
+      if (selectedItem) dismissModal();
       setSubmitting(false);
       if (data.success) {
         resetForm();
@@ -105,7 +113,7 @@ export const AddItemForm = ({ token }) => {
               returnKeyType="done"
               onSubmitEditing={handleSubmit}
             />
-            <Button onPress={handleSubmit} title="Submit" />
+            <Button onPress={handleSubmit} title="Add Item" />
           </View>
         )}
       </Formik>
@@ -124,6 +132,8 @@ export const AddItemForm = ({ token }) => {
 };
 AddItemForm.propTypes = {
   token: string.isRequired,
+  selectedItem: objectOf(shape(ItemShape)),
+  dismissModal: func.isRequired,
 };
 
 export default function Inventory() {
@@ -134,9 +144,20 @@ export default function Inventory() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [inventoryModal, setInventoryModal] = useState([]);
+  const [selectedItem, setSelectedItem] = useState([]);
 
   const addItemsModal = () => {
     setInventoryModal(true);
+  };
+
+  const onEdit = (item) => {
+    setSelectedItem(item);
+    setInventoryModal(true);
+  };
+
+  const dismissModal = () => {
+    setInventoryModal(false);
+    setSelectedItem(false);
   };
 
   useEffect(() => {
@@ -145,6 +166,7 @@ export default function Inventory() {
 
   const init = async () => {
     try {
+      setSelectedItem(false);
       setInventoryModal(false);
       setLoading(true);
       const data = await getItems(token);
@@ -159,7 +181,11 @@ export default function Inventory() {
   return (
     <SafeAreaView style={styles.container}>
       {loading ? (
-        <Spinner />
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Spinner />
+        </View>
       ) : items.length < 1 ? (
         <View>
           <Text style={{ fontSize: 20 }}>Inventory is currently empty!</Text>
@@ -171,14 +197,18 @@ export default function Inventory() {
           />
         </View>
       ) : (
-        <View></View>
+        <ItemList items={items} onEdit={onEdit} />
       )}
       <Overlay
         isVisible={inventoryModal}
         onBackdropPress={init}
         overlayStyle={{ width: "90%" }}
       >
-        <AddItemForm token={token} />
+        <AddItemForm
+          token={token}
+          selectedItem={selectedItem}
+          dismissModal={dismissModal}
+        />
       </Overlay>
       <FAB
         icon="plus"
@@ -192,16 +222,65 @@ export default function Inventory() {
   );
 }
 
-// const ItemCard = ({item}) => {
+const ItemList = ({ items, onEdit }) => (
+  <View style={{ flex: 1, flexDirection: "column", alignItems: "stretch" }}>
+    {items.map((item) => (
+      <ItemCard key={item._id} item={item} onEdit={onEdit} />
+    ))}
+  </View>
+);
+ItemList.propTypes = {
+  items: arrayOf(objectOf(ItemShape)),
+  onEdit: func.isRequired,
+};
 
-// }
+const ItemCard = ({ item, onEdit }) => {
+  const { name, quantity, updated } = item;
+  return (
+    <View
+      style={{
+        paddingVertical: 10,
+        borderBottomColor: "#000",
+        borderBottomWidth: 1,
+        flexDirection: "row",
+        alignItems: "center",
+      }}
+    >
+      <View style={{ flex: 1 }}>
+        <ObjectText
+          label="Name: "
+          value={name}
+          size={16}
+          flex={{ label: 3, value: 7 }}
+        />
+        <ObjectText
+          label="In stock: "
+          value={quantity}
+          size={14}
+          flex={{ label: 3, value: 7 }}
+        />
+        <ObjectText
+          label="Last updated: "
+          value={moment(updated).fromNow()}
+          size={12}
+          flex={{ label: 3, value: 7 }}
+        />
+      </View>
+      <View style={{ marginRight: 20 }}>
+        <Icon name="edit" type="feather" onPress={() => onEdit(item)} />
+      </View>
+    </View>
+  );
+};
+ItemCard.propTypes = {
+  item: objectOf(ItemShape),
+  onEdit: func.isRequired,
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
   },
   fab: {
     position: "absolute",
