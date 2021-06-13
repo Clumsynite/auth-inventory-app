@@ -4,6 +4,7 @@ import Snackbar from "./Snackbar";
 import Toast from "./Toast";
 import TranslucentLoader from "./TranslucentLoader";
 import Avatar from "./Avatar";
+import UserAvatar from "./UserAvatar";
 
 export {
   ErrorMessage,
@@ -12,4 +13,5 @@ export {
   Toast,
   TranslucentLoader,
   Avatar,
+  UserAvatar,
 };
