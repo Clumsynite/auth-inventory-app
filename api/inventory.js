@@ -34,7 +34,7 @@ export const getItem = async (id, token) => {
 
 export const addItem = async (item, token) => {
   try {
-    const response = await fetch(`${url}/user`, {
+    const response = await fetch(`${url}/inventory`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export const addItem = async (item, token) => {
 
 export const updateItem = async (item, token) => {
   try {
-    const response = await fetch(`${url}/user`, {
+    const response = await fetch(`${url}/inventory`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -68,7 +68,7 @@ export const updateItem = async (item, token) => {
 
 export const deleteItem = async (item, token) => {
   try {
-    const response = await fetch(`${url}/user`, {
+    const response = await fetch(`${url}/inventory`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
