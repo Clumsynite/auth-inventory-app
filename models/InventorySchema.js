@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { number, object, string } from "yup";
 
 const InventorySchema = object().shape({
@@ -21,3 +22,16 @@ export default InventorySchema;
     updated: { type: Date, default: Date.now },
   }
 */
+
+export const ItemShape = PropTypes.shape({
+  added: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  quantity: PropTypes.number.isRequired,
+  user: PropTypes.string.isRequired,
+  photo: string,
+  updated: PropTypes.string,
+  _id: PropTypes.string.isRequired,
+  createdAt: PropTypes.string,
+  updatedAt: PropTypes.string,
+  _v: PropTypes.string,
+});
