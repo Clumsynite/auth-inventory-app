@@ -1,8 +1,10 @@
+import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
-import { number, string } from "prop-types";
 import React, { useContext } from "react";
-import { SafeAreaView, Text, StyleSheet, View } from "react-native";
-import UserAvatar from "../components/UserAvatar";
+import { SafeAreaView, StyleSheet, View } from "react-native";
+import { Button } from "react-native-elements";
+
+import { UserAvatar, ObjectText } from "../components";
 import { AuthContext } from "../context/auth";
 
 export default function Home() {
@@ -11,6 +13,10 @@ export default function Home() {
       user: { username, firstname, lastname, joined, email },
     },
   } = useContext(AuthContext);
+
+  const navigation = useNavigation();
+  const goToInventoryScreen = () => navigation.navigate("Inventory");
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ marginBottom: 20 }}>
@@ -20,44 +26,16 @@ export default function Home() {
       <ObjectText label={"Username: "} value={username} />
       <ObjectText label={"Email: "} value={email} />
       <ObjectText label={"Joined: "} value={moment(joined).fromNow()} />
+      <View style={{ marginTop: 20 }}>
+        <Button
+          title="Have a look at your inventory ▶"
+          onPress={goToInventoryScreen}
+          type="clear"
+        />
+      </View>
     </SafeAreaView>
   );
 }
-
-const ObjectText = ({ label, value, size }) => (
-  <View
-    style={{
-      marginVertical: 5,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-    }}
-  >
-    <View style={{ flex: 4 }}>
-      <Text
-        style={{
-          fontSize: size,
-          fontWeight: "bold",
-          flexShrink: 1,
-          textAlign: "right",
-        }}
-      >
-        {label}
-      </Text>
-    </View>
-    <View style={{ flex: 6, paddingLeft: 20 }}>
-      <Text style={{ fontSize: size, flexShrink: 1, textAlign: "left" }}>
-        {value}
-      </Text>
-    </View>
-  </View>
-);
-ObjectText.propTypes = {
-  label: string.isRequired,
-  value: string.isRequired,
-  size: number,
-};
-ObjectText.defaultProps = { size: 16 };
 
 const styles = StyleSheet.create({
   container: {
