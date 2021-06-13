@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react/jsx-no-bind */
-import React from "react";
+import React, { useContext } from "react";
 import {
   View,
   Text,
@@ -18,6 +18,8 @@ import Home from "./Home";
 import Inventory from "./Inventory";
 
 const windowHeight = Dimensions.get("window").height;
+
+import { AuthContext } from "../context/auth";
 
 const Drawer = createDrawerNavigator();
 const HomeStack = createStackNavigator();
@@ -46,8 +48,12 @@ const CustomDrawer = () => {
       menu: "Inventory",
     },
   ];
-
-  const logout = () => console.log("Logout Pressed");
+  const {
+    logout,
+    state: {
+      user: { username },
+    },
+  } = useContext(AuthContext);
 
   return (
     <View style={{ height: windowHeight, flex: 1 }}>
@@ -77,7 +83,7 @@ const CustomDrawer = () => {
                 flexShrink: 1,
               }}
             >
-              Hello {`{userName}`}!
+              Hello {`${username}`}!
             </Text>
           </View>
         </View>
