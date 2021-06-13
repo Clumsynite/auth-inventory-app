@@ -1,8 +1,8 @@
 import React from "react";
-import { number, string } from "prop-types";
+import { number, shape, string } from "prop-types";
 import { Text, View } from "react-native";
 
-const ObjectText = ({ label, value, size }) => (
+const ObjectText = ({ label, value, size, flex }) => (
   <View
     style={{
       marginVertical: 5,
@@ -11,7 +11,7 @@ const ObjectText = ({ label, value, size }) => (
       justifyContent: "center",
     }}
   >
-    <View style={{ flex: 4 }}>
+    <View style={{ flex: flex.label }}>
       <Text
         style={{
           fontSize: size,
@@ -23,7 +23,7 @@ const ObjectText = ({ label, value, size }) => (
         {label}
       </Text>
     </View>
-    <View style={{ flex: 6, paddingLeft: 20 }}>
+    <View style={{ flex: flex.value, paddingLeft: 20 }}>
       <Text style={{ fontSize: size, flexShrink: 1, textAlign: "left" }}>
         {value}
       </Text>
@@ -34,7 +34,8 @@ ObjectText.propTypes = {
   label: string.isRequired,
   value: string.isRequired,
   size: number,
+  flex: shape({ label: number, value: number }),
 };
-ObjectText.defaultProps = { size: 16 };
+ObjectText.defaultProps = { size: 16, flex: { label: 4, value: 6 } };
 
 export default ObjectText;
