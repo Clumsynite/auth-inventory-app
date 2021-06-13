@@ -1,9 +1,9 @@
 import { number, string } from "prop-types";
 import React, { useEffect, useState } from "react";
-import { View, ActivityIndicator } from "react-native";
 import { Icon } from "react-native-elements";
 
 import Avatar from "./Avatar";
+import Spinner from "./Spinner";
 
 import { getAvatar } from "../api/util";
 
@@ -26,12 +26,6 @@ const UserAvatar = ({ username, size }) => {
       console.error("Error fetching user avatar", error);
     }
   };
-
-  const Spinner = () => (
-    <View style={{ borderRadius: 100, height: size, width: size }}>
-      <ActivityIndicator size="large" color="#000" />
-    </View>
-  );
 
   return loading ? (
     <Spinner />

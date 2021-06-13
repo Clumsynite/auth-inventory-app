@@ -6,6 +6,7 @@ import TranslucentLoader from "./TranslucentLoader";
 import Avatar from "./Avatar";
 import UserAvatar from "./UserAvatar";
 import ObjectText from "./ObjectText";
+import Spinner from "./Spinner";
 
 export {
   ErrorMessage,
@@ -16,4 +17,5 @@ export {
   Avatar,
   UserAvatar,
   ObjectText,
+  Spinner,
 };
