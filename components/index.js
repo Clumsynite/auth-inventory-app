@@ -5,6 +5,7 @@ import Toast from "./Toast";
 import TranslucentLoader from "./TranslucentLoader";
 import Avatar from "./Avatar";
 import UserAvatar from "./UserAvatar";
+import ObjectText from "./ObjectText";
 
 export {
   ErrorMessage,
@@ -14,4 +15,5 @@ export {
   TranslucentLoader,
   Avatar,
   UserAvatar,
+  ObjectText,
 };
