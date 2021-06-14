@@ -212,9 +212,9 @@ export default function Inventory() {
         <View
           style={{ flex: 1, flexDirection: "column", alignItems: "stretch" }}
         >
-          {items.map((item) => (
+          {items.map((item, index) => (
             <ItemCard
-              key={item._id}
+              key={index}
               item={item}
               onEdit={onEdit}
               init={init}
