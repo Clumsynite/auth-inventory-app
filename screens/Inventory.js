@@ -1,8 +1,14 @@
 import { Formik } from "formik";
-import { arrayOf, func, objectOf, shape, string } from "prop-types";
+import { func, objectOf, node, string } from "prop-types";
 import React, { useContext, useEffect, useState } from "react";
 import { useRef } from "react";
-import { SafeAreaView, Text, StyleSheet, View } from "react-native";
+import {
+  SafeAreaView,
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+} from "react-native";
 import { Button, Icon, Input, Overlay } from "react-native-elements";
 import { FAB } from "react-native-paper";
 
@@ -13,16 +19,22 @@ import {
   Spinner,
   TranslucentLoader,
 } from "../components";
-import { getItems, addItem, updateItem } from "../api/inventory";
+import { getItems, addItem, updateItem, deleteItem } from "../api/inventory";
 import InventorySchema, { ItemShape } from "../models/InventorySchema";
 import { AuthContext } from "../context/auth";
 import moment from "moment";
 
 export const AddItemForm = ({ token, selectedItem, dismissModal }) => {
-  let initialValues = {
-    name: selectedItem?.name || "",
-    quantity: String(selectedItem?.quantity) || 0,
+  let initialValues;
+  initialValues = {
+    name: "",
+    quantity: 0,
   };
+  if (selectedItem)
+    initialValues = {
+      name: selectedItem?.name,
+      quantity: String(selectedItem?.quantity),
+    };
   const [submitting, setSubmitting] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
 
@@ -132,7 +144,7 @@ export const AddItemForm = ({ token, selectedItem, dismissModal }) => {
 };
 AddItemForm.propTypes = {
   token: string.isRequired,
-  selectedItem: objectOf(shape(ItemShape)),
+  selectedItem: node,
   dismissModal: func.isRequired,
 };
 
@@ -187,7 +199,7 @@ export default function Inventory() {
           <Spinner />
         </View>
       ) : items.length < 1 ? (
-        <View>
+        <View style={styles.flexCenter}>
           <Text style={{ fontSize: 20 }}>Inventory is currently empty!</Text>
           <Button
             type="outline"
@@ -197,7 +209,19 @@ export default function Inventory() {
           />
         </View>
       ) : (
-        <ItemList items={items} onEdit={onEdit} />
+        <View
+          style={{ flex: 1, flexDirection: "column", alignItems: "stretch" }}
+        >
+          {items.map((item) => (
+            <ItemCard
+              key={item._id}
+              item={item}
+              onEdit={onEdit}
+              init={init}
+              token={token}
+            />
+          ))}
+        </View>
       )}
       <Overlay
         isVisible={inventoryModal}
@@ -222,20 +246,27 @@ export default function Inventory() {
   );
 }
 
-const ItemList = ({ items, onEdit }) => (
-  <View style={{ flex: 1, flexDirection: "column", alignItems: "stretch" }}>
-    {items.map((item) => (
-      <ItemCard key={item._id} item={item} onEdit={onEdit} />
-    ))}
-  </View>
-);
-ItemList.propTypes = {
-  items: arrayOf(objectOf(ItemShape)),
-  onEdit: func.isRequired,
-};
-
-const ItemCard = ({ item, onEdit }) => {
+const ItemCard = ({ item, onEdit, init, token }) => {
   const { name, quantity, updated } = item;
+  const [deletingItem, setDeletingItem] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const enableDeleting = () => setDeletingItem(true);
+  const disableDeleting = () => setDeletingItem(false);
+
+  const onDelete = async () => {
+    try {
+      setDeleting(true);
+      await deleteItem(item, token);
+      setDeleting(false);
+      await init();
+    } catch (error) {
+      setDeleting(false);
+      console.error(
+        `ItemCard | Error deleting item ID: ${item._id}, \n${error}`
+      );
+    }
+  };
+
   return (
     <View
       style={{
@@ -246,28 +277,47 @@ const ItemCard = ({ item, onEdit }) => {
         alignItems: "center",
       }}
     >
-      <View style={{ flex: 1 }}>
-        <ObjectText
-          label="Name: "
-          value={name}
-          size={16}
-          flex={{ label: 3, value: 7 }}
-        />
-        <ObjectText
-          label="In stock: "
-          value={quantity}
-          size={14}
-          flex={{ label: 3, value: 7 }}
-        />
-        <ObjectText
-          label="Last updated: "
-          value={moment(updated).fromNow()}
-          size={12}
-          flex={{ label: 3, value: 7 }}
-        />
-      </View>
+      <TouchableOpacity
+        style={{ flex: 1 }}
+        onLongPress={enableDeleting}
+        onPress={disableDeleting}
+      >
+        <View opacity={deletingItem ? 0.3 : 1}>
+          <ObjectText
+            label="Name: "
+            value={name}
+            size={16}
+            flex={{ label: 3, value: 7 }}
+          />
+          <ObjectText
+            label="In stock: "
+            value={quantity}
+            size={14}
+            flex={{ label: 3, value: 7 }}
+          />
+          <ObjectText
+            label="Last updated: "
+            value={moment(updated).fromNow()}
+            size={12}
+            flex={{ label: 3, value: 7 }}
+          />
+        </View>
+      </TouchableOpacity>
       <View style={{ marginRight: 20 }}>
-        <Icon name="edit" type="feather" onPress={() => onEdit(item)} />
+        {deletingItem ? (
+          deleting ? (
+            <Spinner color="#f00" size={20} />
+          ) : (
+            <Icon
+              name="trash-2"
+              type="feather"
+              color="#f00"
+              onPress={onDelete}
+            />
+          )
+        ) : (
+          <Icon name="edit" type="feather" onPress={() => onEdit(item)} />
+        )}
       </View>
     </View>
   );
@@ -275,6 +325,8 @@ const ItemCard = ({ item, onEdit }) => {
 ItemCard.propTypes = {
   item: objectOf(ItemShape),
   onEdit: func.isRequired,
+  init: func.isRequired,
+  token: string.isRequired,
 };
 
 const styles = StyleSheet.create({
@@ -287,5 +339,11 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 10,
     bottom: 10,
+  },
+  flexCenter: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
