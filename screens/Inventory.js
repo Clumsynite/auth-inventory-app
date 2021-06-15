@@ -9,8 +9,8 @@ import {
   View,
   TouchableOpacity,
 } from "react-native";
-import { Button, Icon, Input, Overlay } from "react-native-elements";
-import { FAB } from "react-native-paper";
+import { Button, Icon, Input, Overlay, SearchBar } from "react-native-elements";
+import { FAB, Portal } from "react-native-paper";
 
 import {
   ErrorMessage,
@@ -24,6 +24,7 @@ import InventorySchema, { ItemShape } from "../models/InventorySchema";
 import { AuthContext } from "../context/auth";
 import moment from "moment";
 import { ScrollView } from "react-native";
+import _ from "lodash";
 
 export const AddItemForm = ({ token, selectedItem, dismissModal }) => {
   let initialValues;
@@ -31,10 +32,10 @@ export const AddItemForm = ({ token, selectedItem, dismissModal }) => {
     name: "",
     quantity: 0,
   };
-  if (selectedItem)
+  if (selectedItem?.item)
     initialValues = {
-      name: selectedItem?.name,
-      quantity: String(selectedItem?.quantity),
+      name: selectedItem?.item?.name,
+      quantity: String(selectedItem?.item?.quantity),
     };
   const [submitting, setSubmitting] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
@@ -43,17 +44,23 @@ export const AddItemForm = ({ token, selectedItem, dismissModal }) => {
 
   const dismissSnackbar = () => setSnackbar(false);
 
+  const editItem = selectedItem?.item && selectedItem?.edit;
+
   const onSubmit = async (values, { resetForm }) => {
     try {
       values.quantity = Number(values.quantity);
       setSubmitting(true);
-      const data = selectedItem
+      const data = editItem
         ? await updateItem(
-            { ...selectedItem, ...values, updated: moment().toISOString() },
+            {
+              ...selectedItem.item,
+              ...values,
+              updated: moment().toISOString(),
+            },
             token
           )
         : await addItem(values, token);
-      if (selectedItem) dismissModal();
+      if (selectedItem?.item) dismissModal();
       setSubmitting(false);
       if (data.success) {
         resetForm();
@@ -155,22 +162,29 @@ export default function Inventory() {
   } = useContext(AuthContext);
 
   const [items, setItems] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [inventoryModal, setInventoryModal] = useState([]);
   const [selectedItem, setSelectedItem] = useState([]);
+  const [fabOpen, setFabOpen] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const onFabClick = () => setFabOpen(!fabOpen);
 
   const addItemsModal = () => {
     setInventoryModal(true);
   };
 
   const onEdit = (item) => {
-    setSelectedItem(item);
+    setSelectedItem({ item, edit: true });
     setInventoryModal(true);
   };
 
   const dismissModal = () => {
     setInventoryModal(false);
     setSelectedItem(false);
+    init();
   };
 
   useEffect(() => {
@@ -179,17 +193,47 @@ export default function Inventory() {
 
   const init = async () => {
     try {
+      setFabOpen(false);
+      if (searching) {
+        setSearching(false);
+        setSearchTerm("");
+      }
       setSelectedItem(false);
       setInventoryModal(false);
       setLoading(true);
       const data = await getItems(token);
       setLoading(false);
-      if (data.success) setItems(data.items);
+      if (data.success) {
+        setItems(data.items);
+        setFilteredItems(data.items);
+      }
     } catch (error) {
       setLoading(false);
       console.error("Error fetching inventory", error);
     }
   };
+
+  const onSearchClick = () => {
+    setSearching(true);
+  };
+
+  const closeSearch = () => {
+    setSearchTerm("");
+    setSearching(false);
+    setFilteredItems(items);
+  };
+
+  const updateSearch = (value) => {
+    setSearchTerm(value);
+    if (value.trim().length < 1 || !value) {
+      setFilteredItems(items);
+    } else {
+      setFilteredItems(
+        _.filter(items, (item) => item.name.match(new RegExp(value, "i")))
+      );
+    }
+  };
+  const resetSearch = () => setFilteredItems(items);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -211,26 +255,70 @@ export default function Inventory() {
         </View>
       ) : (
         <>
-          <Total total={items.length} />
-          <ScrollView>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "column",
-                alignItems: "stretch",
-              }}
-            >
-              {items.map((item, index) => (
-                <ItemCard
-                  key={index}
-                  item={item}
-                  onEdit={onEdit}
-                  init={init}
-                  token={token}
-                />
-              ))}
+          {searching && (
+            <SearchBar
+              placeholder="Enter item name..."
+              onChangeText={updateSearch}
+              value={searchTerm}
+              onCancel={resetSearch}
+              onClear={resetSearch}
+              lightTheme
+              showCancel
+              searchIcon={
+                searchTerm.trim().length > 0 ? (
+                  <Icon
+                    name="arrow-left"
+                    type="feather"
+                    onPress={closeSearch}
+                  />
+                ) : (
+                  <Icon name="search" type="feather" />
+                )
+              }
+            />
+          )}
+          {filteredItems.length > 0 ? (
+            <>
+              <Total total={filteredItems.length} />
+              <ScrollView>
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "column",
+                    alignItems: "stretch",
+                  }}
+                >
+                  {filteredItems.map((item, index) => (
+                    <ItemCard
+                      key={index}
+                      item={item}
+                      onEdit={onEdit}
+                      init={init}
+                      token={token}
+                    />
+                  ))}
+                </View>
+              </ScrollView>
+            </>
+          ) : (
+            <View style={{ ...styles.flexCenter }}>
+              <Text style={{ fontSize: 20 }}>
+                Can&apos; find {searchTerm} in Inventory
+              </Text>
+              <Button
+                type="outline"
+                onPress={() => {
+                  setSelectedItem({
+                    item: { name: searchTerm, quantity: 1 },
+                    edit: false,
+                  });
+                  addItemsModal();
+                }}
+                title={`Add ${searchTerm} to inventory`}
+                containerStyle={{ marginVertical: 10 }}
+              />
             </View>
-          </ScrollView>
+          )}
         </>
       )}
       <Overlay
@@ -244,14 +332,28 @@ export default function Inventory() {
           dismissModal={dismissModal}
         />
       </Overlay>
-      <FAB
-        icon="plus"
-        large
-        placement="right"
-        color="#fff"
-        style={styles.fab}
-        onPress={addItemsModal}
-      />
+      <Portal>
+        <FAB.Group
+          open={fabOpen}
+          color="#fff"
+          icon={fabOpen ? "arrow-down" : "apps"}
+          actions={[
+            {
+              icon: "plus",
+              label: "Add New Item",
+              onPress: addItemsModal,
+              small: false,
+            },
+            {
+              icon: "magnify",
+              label: "Search",
+              onPress: onSearchClick,
+              small: false,
+            },
+          ]}
+          onStateChange={onFabClick}
+        />
+      </Portal>
     </SafeAreaView>
   );
 }
