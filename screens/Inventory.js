@@ -23,6 +23,7 @@ import { getItems, addItem, updateItem, deleteItem } from "../api/inventory";
 import InventorySchema, { ItemShape } from "../models/InventorySchema";
 import { AuthContext } from "../context/auth";
 import moment from "moment";
+import { ScrollView } from "react-native";
 
 export const AddItemForm = ({ token, selectedItem, dismissModal }) => {
   let initialValues;
@@ -209,19 +210,28 @@ export default function Inventory() {
           />
         </View>
       ) : (
-        <View
-          style={{ flex: 1, flexDirection: "column", alignItems: "stretch" }}
-        >
-          {items.map((item, index) => (
-            <ItemCard
-              key={index}
-              item={item}
-              onEdit={onEdit}
-              init={init}
-              token={token}
-            />
-          ))}
-        </View>
+        <>
+          <Total total={items.length} />
+          <ScrollView>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "column",
+                alignItems: "stretch",
+              }}
+            >
+              {items.map((item, index) => (
+                <ItemCard
+                  key={index}
+                  item={item}
+                  onEdit={onEdit}
+                  init={init}
+                  token={token}
+                />
+              ))}
+            </View>
+          </ScrollView>
+        </>
       )}
       <Overlay
         isVisible={inventoryModal}
@@ -245,6 +255,21 @@ export default function Inventory() {
     </SafeAreaView>
   );
 }
+
+const Total = ({ total }) => (
+  <View
+    style={{
+      ...styles.flexRow,
+      borderBottomColor: "#000",
+      borderWidth: 1,
+      padding: 8,
+    }}
+  >
+    <Text style={{ ...styles.total }}>Total Items: </Text>
+    <Text style={{ ...styles.total, fontWeight: "bold" }}>{total}</Text>
+  </View>
+);
+Total.propTypes = { total: string.isRequired };
 
 const ItemCard = ({ item, onEdit, init, token }) => {
   const { name, quantity, updated } = item;
@@ -345,5 +370,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+  },
+  flexRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  total: {
+    fontSize: 20,
   },
 });
