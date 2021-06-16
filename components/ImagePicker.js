@@ -4,7 +4,7 @@ import * as ExpoImagePicker from "expo-image-picker";
 import { func, string } from "prop-types";
 import { Icon } from "react-native-elements";
 import { TouchableOpacity } from "react-native";
-import { Avatar } from "./Avatar";
+import Avatar from "./Avatar";
 
 export default function ImagePicker({ image, setImage, placeholder }) {
   useEffect(() => {
