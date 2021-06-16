@@ -151,18 +151,16 @@ export const SignupForm = () => {
                 try {
                   setFieldValue("username", value);
                   setFieldTouched("username", true);
-                  setTimeout(async () => {
-                    setChecking(true);
-                    const { exists } = await util.usernameExists(value.trim());
-                    setUsernameExists(
-                      !value || value.trim() === ""
-                        ? usernameStatus.EMPTY
-                        : exists
-                        ? usernameStatus.EXISTS
-                        : usernameStatus.NOT_EXISTS
-                    );
-                    setChecking(false);
-                  }, 500);
+                  setChecking(true);
+                  const { exists } = await util.usernameExists(value.trim());
+                  setUsernameExists(
+                    !value || value.trim() === ""
+                      ? usernameStatus.EMPTY
+                      : exists
+                      ? usernameStatus.EXISTS
+                      : usernameStatus.NOT_EXISTS
+                  );
+                  setChecking(false);
                 } catch (e) {
                   setChecking(false);
                   console.error(e);
