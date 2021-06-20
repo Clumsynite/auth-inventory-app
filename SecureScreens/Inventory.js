@@ -13,6 +13,7 @@ import { Button, Icon, Input, Overlay, SearchBar } from "react-native-elements";
 import { FAB, Portal } from "react-native-paper";
 
 import {
+  Camera,
   ErrorMessage,
   ObjectText,
   Snackbar,
@@ -26,7 +27,12 @@ import moment from "moment";
 import { ScrollView } from "react-native";
 import _ from "lodash";
 
-export const AddItemForm = ({ token, selectedItem, dismissModal }) => {
+export const AddItemForm = ({
+  token,
+  selectedItem,
+  dismissModal,
+  closeModal,
+}) => {
   let initialValues;
   initialValues = {
     name: "",
@@ -39,6 +45,7 @@ export const AddItemForm = ({ token, selectedItem, dismissModal }) => {
     };
   const [submitting, setSubmitting] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
+  const [image, setImage] = useState(false);
 
   const quantityInput = useRef(null);
 
@@ -49,6 +56,7 @@ export const AddItemForm = ({ token, selectedItem, dismissModal }) => {
   const onSubmit = async (values, { resetForm }) => {
     try {
       values.quantity = Number(values.quantity);
+      if (image) values.photo = image;
       setSubmitting(true);
       const data = editItem
         ? await updateItem(
@@ -90,6 +98,23 @@ export const AddItemForm = ({ token, selectedItem, dismissModal }) => {
 
   return (
     <>
+      <View style={{ ...styles.flexRow }}>
+        <TouchableOpacity
+          style={{ ...styles.backButton, ...styles.flexRow }}
+          onPress={closeModal}
+        >
+          <Icon name="chevron-left" type="feather" color="#fff" size={16} />
+          <Text style={{ color: "#fff" }}>Back</Text>
+        </TouchableOpacity>
+        <View style={{ flex: 4 }}></View>
+      </View>
+      <View style={{ flex: 1 }}>
+        <Camera
+          image={image}
+          setImage={setImage}
+          placeHolder="Select an Image for this item (Optional) "
+        />
+      </View>
       <Formik
         initialValues={initialValues}
         onSubmit={onSubmit}
@@ -103,7 +128,7 @@ export const AddItemForm = ({ token, selectedItem, dismissModal }) => {
           errors,
           touched,
         }) => (
-          <View>
+          <View style={{ flex: 3 }}>
             {errors.name && touched.name ? (
               <ErrorMessage error={errors.name} />
             ) : null}
@@ -154,6 +179,7 @@ AddItemForm.propTypes = {
   token: string.isRequired,
   selectedItem: any,
   dismissModal: func.isRequired,
+  closeModal: func.isRequired,
 };
 
 export default function Inventory() {
@@ -164,7 +190,7 @@ export default function Inventory() {
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [inventoryModal, setInventoryModal] = useState([]);
+  const [inventoryModal, setInventoryModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState([]);
   const [fabOpen, setFabOpen] = useState(false);
   const [searching, setSearching] = useState(false);
@@ -185,6 +211,11 @@ export default function Inventory() {
     setInventoryModal(false);
     setSelectedItem(false);
     init();
+  };
+
+  const closeModal = () => {
+    setInventoryModal(false);
+    setSelectedItem(false);
   };
 
   useEffect(() => {
@@ -313,15 +344,12 @@ export default function Inventory() {
           )}
         </>
       )}
-      <Overlay
-        isVisible={inventoryModal}
-        onBackdropPress={init}
-        overlayStyle={{ width: "90%" }}
-      >
+      <Overlay isVisible={inventoryModal} onBackdropPress={init} fullScreen>
         <AddItemForm
           token={token}
           selectedItem={selectedItem}
           dismissModal={dismissModal}
+          closeModal={closeModal}
         />
       </Overlay>
       <Portal>
@@ -472,5 +500,11 @@ const styles = StyleSheet.create({
   },
   total: {
     fontSize: 20,
+  },
+  backButton: {
+    flexShrink: 1,
+    backgroundColor: "#000",
+    borderRadius: 4,
+    padding: 4,
   },
 });
