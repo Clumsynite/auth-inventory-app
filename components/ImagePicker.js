@@ -21,9 +21,9 @@ export default function ImagePicker({ image, setImage, placeholder }) {
 
   const pickImage = async () => {
     let result = await ExpoImagePicker.launchImageLibraryAsync({
-      mediaTypes: ExpoImagePicker.MediaTypeOptions.All,
+      mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [1, 1],
       quality: 1,
       base64: true,
     });
@@ -48,7 +48,7 @@ export default function ImagePicker({ image, setImage, placeholder }) {
         {image ? (
           <Avatar source={image} size={120} />
         ) : (
-          <Icon name="user" type="feather" raised size={50} />
+          <Icon name="image" type="feather" raised size={50} />
         )}
       </TouchableOpacity>
       {!image && placeholder && (
