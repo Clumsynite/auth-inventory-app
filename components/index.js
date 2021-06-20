@@ -8,6 +8,7 @@ import UserAvatar from "./UserAvatar";
 import ObjectText from "./ObjectText";
 import Spinner from "./Spinner";
 import FullScreenLoading from "./FullScreenLoading";
+import Camera from "./Camera";
 
 export {
   ErrorMessage,
@@ -20,4 +21,5 @@ export {
   ObjectText,
   Spinner,
   FullScreenLoading,
+  Camera,
 };
