@@ -242,7 +242,7 @@ export default function Inventory() {
       const data = await getItems(token);
       setLoading(false);
       if (data.success) {
-        const items = _.orderBy(data.items, ["updated"], ["desc"]);
+        const items = _.sortBy(data.items, item => (item.name).toLowerCase());
         setItems(items);
         setFilteredItems(items);
       }
