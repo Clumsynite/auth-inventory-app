@@ -264,16 +264,11 @@ export default function Inventory() {
               onClear={resetSearch}
               lightTheme
               showCancel
-              searchIcon={
-                searchTerm.trim().length > 0 ? (
-                  <Icon
+              searchIcon={<Icon
                     name="arrow-left"
                     type="feather"
                     onPress={closeSearch}
                   />
-                ) : (
-                  <Icon name="search" type="feather" />
-                )
               }
             />
           )}
