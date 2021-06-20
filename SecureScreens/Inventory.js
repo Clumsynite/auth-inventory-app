@@ -47,6 +47,10 @@ export const AddItemForm = ({
   const [snackbar, setSnackbar] = useState(false);
   const [image, setImage] = useState(false);
 
+  useEffect(() => {
+    if (selectedItem?.item?.photo) setImage(selectedItem?.item?.photo);
+  }, []);
+
   const quantityInput = useRef(null);
 
   const dismissSnackbar = () => setSnackbar(false);
@@ -158,7 +162,10 @@ export const AddItemForm = ({
               returnKeyType="done"
               onSubmitEditing={handleSubmit}
             />
-            <Button onPress={handleSubmit} title="Add Item" />
+            <Button
+              onPress={handleSubmit}
+              title={selectedItem.edit ? "Edit Item" : "Add Item"}
+            />
           </View>
         )}
       </Formik>
