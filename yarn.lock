@@ -3613,6 +3613,11 @@ expo-linking@~2.2.3:
     qs "^6.5.0"
     url-parse "^1.4.4"
 
+expo-network@~3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/expo-network/-/expo-network-3.1.1.tgz#05a3c0e6cd598b7650e2fd02a8e201866e788be5"
+  integrity sha512-ryhq8PQIY8GbvmLXHPEXJ8WUGKdnwr4CfT8Y/BsGLZzyjoied+9tgaWmdV4pOCWd/hcBoTqr9q3hlUbZDCDLJw==
+
 expo-permissions@~12.0.1:
   version "12.0.1"
   resolved "https://registry.yarnpkg.com/expo-permissions/-/expo-permissions-12.0.1.tgz#5163c00d991bf565bf987354611628c298ddd0c4"
