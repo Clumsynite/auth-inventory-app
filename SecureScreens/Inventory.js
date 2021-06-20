@@ -242,8 +242,9 @@ export default function Inventory() {
       const data = await getItems(token);
       setLoading(false);
       if (data.success) {
-        setItems(data.items);
-        setFilteredItems(data.items);
+        const items = _.orderBy(data.items, ["updated"], ["desc"]);
+        setItems(items);
+        setFilteredItems(items);
       }
     } catch (error) {
       setLoading(false);
