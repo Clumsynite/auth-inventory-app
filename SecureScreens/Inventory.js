@@ -13,9 +13,9 @@ import { Button, Icon, Input, Overlay, SearchBar } from "react-native-elements";
 import { FAB, Portal } from "react-native-paper";
 
 import {
+  Avatar,
   Camera,
   ErrorMessage,
-  ObjectText,
   Snackbar,
   Spinner,
   TranslucentLoader,
@@ -394,7 +394,7 @@ const Total = ({ total }) => (
 Total.propTypes = { total: number.isRequired };
 
 const ItemCard = ({ item, onEdit, init, token }) => {
-  const { name, quantity, updated } = item;
+  const { name, quantity, updated, photo } = item;
   const [deletingItem, setDeletingItem] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const enableDeleting = () => setDeletingItem(true);
@@ -417,37 +417,48 @@ const ItemCard = ({ item, onEdit, init, token }) => {
   return (
     <View
       style={{
-        paddingVertical: 10,
+        padding: 10,
         borderBottomColor: "#000",
         borderBottomWidth: 1,
         flexDirection: "row",
         alignItems: "center",
       }}
     >
+      <View style={{ flex: 1 }}>
+        <Avatar source={photo} />
+      </View>
       <TouchableOpacity
-        style={{ flex: 1 }}
+        style={{ flex: 3 }}
         onLongPress={enableDeleting}
         onPress={disableDeleting}
       >
-        <View opacity={deletingItem ? 0.3 : 1}>
-          <ObjectText
-            label="Name: "
-            value={name}
-            size={16}
-            flex={{ label: "3", value: "7" }}
-          />
-          <ObjectText
-            label="In stock: "
-            value={String(quantity)}
-            size={14}
-            flex={{ label: "3", value: "7" }}
-          />
-          <ObjectText
-            label="Last updated: "
-            value={moment(updated).fromNow()}
-            size={12}
-            flex={{ label: "3", value: "7" }}
-          />
+        <View opacity={deletingItem ? 0.3 : 1} style={{ flex: 1 }}>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "bold",
+              flexShrink: 1,
+            }}
+          >
+            {name}
+          </Text>
+          <Text
+            style={{
+              fontSize: 14,
+              flexShrink: 1,
+            }}
+          >
+            In stock: {quantity}
+          </Text>
+          <Text
+            style={{
+              fontStyle: "italic",
+              fontSize: 12,
+              flexShrink: 1,
+            }}
+          >
+            Last updated: {moment(updated).fromNow()}
+          </Text>
         </View>
       </TouchableOpacity>
       <View style={{ marginRight: 20 }}>
