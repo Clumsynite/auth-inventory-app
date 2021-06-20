@@ -22,9 +22,10 @@ const UserAvatar = ({ username, size }) => {
       let data;
       if (username) data = await getAvatar(username);
       else data = false;
+      let image = NoImageAvailable;
+      if (data?.photo) image = data.photo;
       setLoading(false);
-      if (!data) setImage(NoImageAvailable);
-      else setImage(data?.photo);
+      setImage(image);
     } catch (error) {
       setLoading(false);
       console.error("Error fetching user avatar", error);
