@@ -1,5 +1,3 @@
-/* eslint-disable react/display-name */
-/* eslint-disable react/jsx-no-bind */
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import Offline from "./Offline";
