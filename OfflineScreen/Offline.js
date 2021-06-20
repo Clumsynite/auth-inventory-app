@@ -1,7 +1,7 @@
 import React from "react";
 import { SafeAreaView, StyleSheet, View, Text } from "react-native";
 
-export default function Login() {
+export default function OfflineScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View>
