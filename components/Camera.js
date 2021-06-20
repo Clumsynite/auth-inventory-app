@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { View, Platform, Text } from "react-native";
 import * as ExpoImagePicker from "expo-image-picker";
-import { func, string } from "prop-types";
+import { any, func, string } from "prop-types";
 import { Icon } from "react-native-elements";
 import { TouchableOpacity } from "react-native";
 import Avatar from "./Avatar";
 
-export default function ImagePicker({ image, setImage, placeholder }) {
+export default function Camera({ image, setImage, placeholder }) {
   useEffect(() => {
     (async () => {
       if (Platform.OS !== "web") {
@@ -59,9 +59,9 @@ export default function ImagePicker({ image, setImage, placeholder }) {
     </View>
   );
 }
-ImagePicker.propTypes = {
-  image: string,
+Camera.propTypes = {
+  image: any,
   setImage: func.isRequired,
   placeholder: string,
 };
-ImagePicker.defaultProps = { image: null, placeholder: null };
+Camera.defaultProps = { image: null, placeholder: null };
