@@ -1,5 +1,5 @@
 import React from "react";
-import { number, shape, string } from "prop-types";
+import { object, number, string } from "prop-types";
 import { Text, View } from "react-native";
 
 const ObjectText = ({ label, value, size, flex }) => (
@@ -34,7 +34,7 @@ ObjectText.propTypes = {
   label: string.isRequired,
   value: string.isRequired,
   size: number,
-  flex: shape({ label: number, value: number }),
+  flex: any,
 };
 ObjectText.defaultProps = { size: 16, flex: { label: 4, value: 6 } };
 
