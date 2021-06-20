@@ -26,7 +26,7 @@ const Drawer = createDrawerNavigator();
 const HomeStack = createStackNavigator();
 const InventoryStack = createStackNavigator();
 
-function Screens() {
+function SecureScreens() {
   return (
     <Drawer.Navigator
       initialRouteName="Home"
@@ -225,4 +225,4 @@ function InventoryStackScreen({ navigation }) {
 InventoryStackScreen.propTypes = {
   navigation: any.isRequired,
 };
-export default Screens;
+export default SecureScreens;

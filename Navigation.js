@@ -4,7 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import NetInfo from "@react-native-community/netinfo";
 
 import { AuthContext } from "./context/auth";
-import Screens from "./screens";
+import SecureScreens from "./SecureScreens";
 import AuthScreens from "./AuthScreens";
 import OfflineScreen from "./OfflineScreen";
 
@@ -50,7 +50,7 @@ const Navigation = () => {
         ) : !token ? (
           <Stack.Screen name="AuthScreens" component={AuthScreens} />
         ) : (
-          <Stack.Screen name="Screens" component={Screens} />
+          <Stack.Screen name="SecureScreens" component={SecureScreens} />
         )}
       </Stack.Navigator>
     </NavigationContainer>
