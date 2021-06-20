@@ -7,6 +7,7 @@ import { AuthContext } from "./context/auth";
 import SecureScreens from "./SecureScreens";
 import AuthScreens from "./AuthScreens";
 import OfflineScreen from "./OfflineScreen";
+import SplashScreen from "./SplashScreen";
 
 const Navigation = () => {
   const routeNameRef = useRef();
@@ -14,7 +15,7 @@ const Navigation = () => {
   const Stack = createStackNavigator();
 
   const {
-    state: { token },
+    state: { token, isLoading },
   } = useContext(AuthContext);
 
   const [connected, setConnected] = useState(true);
@@ -24,6 +25,8 @@ const Navigation = () => {
       setConnected(state.isConnected);
     });
   }, []);
+
+  if (isLoading) return <SplashScreen />;
 
   return (
     <NavigationContainer
