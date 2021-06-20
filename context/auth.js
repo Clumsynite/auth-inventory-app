@@ -77,8 +77,8 @@ function AuthProvider(props) {
       dispatch({ type: "LOADING", payload: { isLoading: true } });
       const user = await getObjectData("user");
       const token = await getData("token");
-      dispatch({ type: "LOGIN", payload: { user, token } });
       dispatch({ type: "LOADING", payload: { isLoading: false } });
+      dispatch({ type: "LOGIN", payload: { user, token } });
     } catch (error) {
       console.error("Error initialising user", error);
     }

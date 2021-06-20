@@ -10,7 +10,7 @@ export default function SplashScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ActivityIndicator size="large" color="#000" />
-      <Text style={{ fontSize: 20, flexShrink: 1 }}>initialising app...</Text>
+      <Text style={{ fontSize: 20, flexShrink: 1 }}>Initialising app...</Text>
     </SafeAreaView>
   );
 }
