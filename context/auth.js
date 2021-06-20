@@ -8,7 +8,7 @@ const AuthContext = createContext({
   login: ({ user, token }) => {
     user, token;
   },
-  logout: () => null,
+  logout: () => initialState,
 });
 
 function AuthReducer(state, action) {
