@@ -1,5 +1,5 @@
 import React from "react";
-import { object, number, string } from "prop-types";
+import { any, number, string } from "prop-types";
 import { Text, View } from "react-native";
 
 const ObjectText = ({ label, value, size, flex }) => (
