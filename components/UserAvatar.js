@@ -6,6 +6,7 @@ import Avatar from "./Avatar";
 import Spinner from "./Spinner";
 
 import { getAvatar } from "../api/util";
+import { NoImageAvailable } from "../assets/base64";
 
 const UserAvatar = ({ username, size }) => {
   const [loading, setLoading] = useState(false);
@@ -18,9 +19,12 @@ const UserAvatar = ({ username, size }) => {
   const init = async () => {
     try {
       setLoading(true);
-      const { photo } = await getAvatar(username);
+      let data;
+      if (username) data = await getAvatar(username);
+      else data = false;
       setLoading(false);
-      setImage(photo);
+      if (!data) setImage(NoImageAvailable);
+      else setImage(data?.photo);
     } catch (error) {
       setLoading(false);
       console.error("Error fetching user avatar", error);
