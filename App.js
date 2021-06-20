@@ -9,12 +9,12 @@ import Navigation from "./Navigation";
 
 export default function App() {
   return (
-    <PaperProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <PaperProvider>
         <MenuProvider>
           <Navigation />
         </MenuProvider>
-      </AuthProvider>
-    </PaperProvider>
+      </PaperProvider>
+    </AuthProvider>
   );
 }
