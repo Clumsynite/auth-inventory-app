@@ -9,9 +9,7 @@ import { AuthContext } from "../context/auth";
 
 export default function Home() {
   const {
-    state: {
-      user: { username, firstname, lastname, joined, email },
-    },
+    state: { user },
   } = useContext(AuthContext);
 
   const navigation = useNavigation();
@@ -20,12 +18,15 @@ export default function Home() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ marginBottom: 20 }}>
-        <UserAvatar username={username} size={120} />
+        <UserAvatar username={user?.username} size={120} />
       </View>
-      <ObjectText label={"Name: "} value={`${firstname} ${lastname}`} />
-      <ObjectText label={"Username: "} value={username} />
-      <ObjectText label={"Email: "} value={email} />
-      <ObjectText label={"Joined: "} value={moment(joined).fromNow()} />
+      <ObjectText
+        label={"Name: "}
+        value={`${user?.firstname} ${user?.lastname}`}
+      />
+      <ObjectText label={"Username: "} value={user?.username} />
+      <ObjectText label={"Email: "} value={user?.email} />
+      <ObjectText label={"Joined: "} value={moment(user?.joined).fromNow()} />
       <View style={{ marginTop: 20 }}>
         <Button
           title="Have a look at your inventory ▶"

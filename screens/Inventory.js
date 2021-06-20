@@ -1,5 +1,5 @@
 import { Formik } from "formik";
-import { func, objectOf, node, string } from "prop-types";
+import { func, objectOf, node, string, number } from "prop-types";
 import React, { useContext, useEffect, useState } from "react";
 import { useRef } from "react";
 import {
@@ -264,11 +264,8 @@ export default function Inventory() {
               onClear={resetSearch}
               lightTheme
               showCancel
-              searchIcon={<Icon
-                    name="arrow-left"
-                    type="feather"
-                    onPress={closeSearch}
-                  />
+              searchIcon={
+                <Icon name="arrow-left" type="feather" onPress={closeSearch} />
               }
             />
           )}
@@ -366,7 +363,7 @@ const Total = ({ total }) => (
     <Text style={{ ...styles.total, fontWeight: "bold" }}>{total}</Text>
   </View>
 );
-Total.propTypes = { total: string.isRequired };
+Total.propTypes = { total: number.isRequired };
 
 const ItemCard = ({ item, onEdit, init, token }) => {
   const { name, quantity, updated } = item;

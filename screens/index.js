@@ -52,9 +52,7 @@ const CustomDrawer = () => {
   ];
   const {
     logout,
-    state: {
-      user: { username },
-    },
+    state: { user },
   } = useContext(AuthContext);
 
   return (
@@ -77,7 +75,7 @@ const CustomDrawer = () => {
             paddingBottom: 0,
           }}
         >
-          <UserAvatar username={username} />
+          <UserAvatar username={user?.username} />
           <View style={{ flexShrink: 1, marginLeft: 20 }}>
             <Text
               style={{
@@ -86,7 +84,7 @@ const CustomDrawer = () => {
                 flexShrink: 1,
               }}
             >
-              Hello! {`${username}`}
+              Hello! {`${user?.username}`}
             </Text>
           </View>
         </View>
