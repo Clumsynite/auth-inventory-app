@@ -1,7 +1,7 @@
 import React, { createContext, useReducer, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-let initialState = { user: null, token: null };
+let initialState = { user: null, token: null, isLoading: false };
 
 const AuthContext = createContext({
   state: initialState,
@@ -14,9 +14,11 @@ const AuthContext = createContext({
 function AuthReducer(state, action) {
   switch (action.type) {
     case "LOGIN":
-      return action.payload;
+      return { ...state, ...action.payload };
     case "LOGOUT":
       return initialState;
+    case "LOADING":
+      return { ...state, ...action.payload };
     default:
       return state;
   }
@@ -72,9 +74,11 @@ function AuthProvider(props) {
 
   const init = async () => {
     try {
+      dispatch({ type: "LOADING", payload: { isLoading: true } });
       const user = await getObjectData("user");
       const token = await getData("token");
       dispatch({ type: "LOGIN", payload: { user, token } });
+      dispatch({ type: "LOADING", payload: { isLoading: false } });
     } catch (error) {
       console.error("Error initialising user", error);
     }
