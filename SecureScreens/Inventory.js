@@ -1,5 +1,5 @@
 import { Formik } from "formik";
-import { func, objectOf, node, string, number } from "prop-types";
+import { func, any, string, number, object } from "prop-types";
 import React, { useContext, useEffect, useState } from "react";
 import { useRef } from "react";
 import {
@@ -20,7 +20,7 @@ import {
   TranslucentLoader,
 } from "../components";
 import { getItems, addItem, updateItem, deleteItem } from "../api/inventory";
-import InventorySchema, { ItemShape } from "../models/InventorySchema";
+import InventorySchema from "../models/InventorySchema";
 import { AuthContext } from "../context/auth";
 import moment from "moment";
 import { ScrollView } from "react-native";
@@ -152,7 +152,7 @@ export const AddItemForm = ({ token, selectedItem, dismissModal }) => {
 };
 AddItemForm.propTypes = {
   token: string.isRequired,
-  selectedItem: node,
+  selectedItem: any,
   dismissModal: func.isRequired,
 };
 
@@ -406,19 +406,19 @@ const ItemCard = ({ item, onEdit, init, token }) => {
             label="Name: "
             value={name}
             size={16}
-            flex={{ label: 3, value: 7 }}
+            flex={{ label: "3", value: "7" }}
           />
           <ObjectText
             label="In stock: "
-            value={quantity}
+            value={String(quantity)}
             size={14}
-            flex={{ label: 3, value: 7 }}
+            flex={{ label: "3", value: "7" }}
           />
           <ObjectText
             label="Last updated: "
             value={moment(updated).fromNow()}
             size={12}
-            flex={{ label: 3, value: 7 }}
+            flex={{ label: "3", value: "7" }}
           />
         </View>
       </TouchableOpacity>
@@ -442,7 +442,7 @@ const ItemCard = ({ item, onEdit, init, token }) => {
   );
 };
 ItemCard.propTypes = {
-  item: objectOf(ItemShape),
+  item: object,
   onEdit: func.isRequired,
   init: func.isRequired,
   token: string.isRequired,
