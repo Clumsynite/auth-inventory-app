@@ -11,7 +11,7 @@ const ObjectText = ({ label, value, size, flex }) => (
       justifyContent: "center",
     }}
   >
-    <View style={{ flex: flex.label }}>
+    <View style={{ flex: Number(flex.label) }}>
       <Text
         style={{
           fontSize: size,
@@ -23,7 +23,7 @@ const ObjectText = ({ label, value, size, flex }) => (
         {label}
       </Text>
     </View>
-    <View style={{ flex: flex.value, paddingLeft: 20 }}>
+    <View style={{ flex: Number(flex.value), paddingLeft: 20 }}>
       <Text style={{ fontSize: size, flexShrink: 1, textAlign: "left" }}>
         {value}
       </Text>
@@ -36,6 +36,6 @@ ObjectText.propTypes = {
   size: number,
   flex: any,
 };
-ObjectText.defaultProps = { size: 16, flex: { label: 4, value: 6 } };
+ObjectText.defaultProps = { size: 16, flex: { label: "4", value: "6" } };
 
 export default ObjectText;
