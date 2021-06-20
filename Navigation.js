@@ -1,10 +1,12 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useRef, useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import NetInfo from "@react-native-community/netinfo";
 
 import { AuthContext } from "./context/auth";
 import Screens from "./screens";
 import AuthScreens from "./AuthScreens";
+import OfflineScreen from "./OfflineScreen";
 
 const Navigation = () => {
   const routeNameRef = useRef();
@@ -14,6 +16,14 @@ const Navigation = () => {
   const {
     state: { token },
   } = useContext(AuthContext);
+
+  const [connected, setConnected] = useState(true);
+
+  useEffect(() => {
+    NetInfo.addEventListener((state) => {
+      setConnected(state.isConnected);
+    });
+  }, []);
 
   return (
     <NavigationContainer
@@ -35,8 +45,10 @@ const Navigation = () => {
           headerShown: false,
         }}
       >
-        {!token ? (
-          <Stack.Screen name="Screens" component={AuthScreens} />
+        {!connected ? (
+          <Stack.Screen name="OfflineScreen" component={OfflineScreen} />
+        ) : !token ? (
+          <Stack.Screen name="AuthScreens" component={AuthScreens} />
         ) : (
           <Stack.Screen name="Screens" component={Screens} />
         )}
