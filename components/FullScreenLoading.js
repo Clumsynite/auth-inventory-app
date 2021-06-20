@@ -1,21 +1,17 @@
 import { object, string } from "prop-types";
 import React from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Text,
+  SafeAreaView,
+  StyleSheet,
+} from "react-native";
 
 const TranslucentLoader = ({ color, message, messageStyle }) => (
-  <View
-    style={{
-      flex: 1,
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-    }}
-  >
-    <View>
-      <ActivityIndicator size="large" color={color} />
-      {message && <Text style={messageStyle}>{message}</Text>}
-    </View>
-  </View>
+  <SafeAreaView style={styles.container}>
+    <ActivityIndicator size="large" color={color} />
+    {message && <Text style={messageStyle}>{message}</Text>}
+  </SafeAreaView>
 );
 
 TranslucentLoader.propTypes = {
@@ -24,5 +20,14 @@ TranslucentLoader.propTypes = {
   messageStyle: object,
 };
 TranslucentLoader.defaultProps = { color: "#000" };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
 
 export default TranslucentLoader;
